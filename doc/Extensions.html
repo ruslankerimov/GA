@@ -1,0 +1,809 @@
+<html><head><title>GAlib: Extensions</title>
+
+<!-- by matthew wall                           all rights reserved -->
+<!-- Copyright (c) 1995-1996 Massachusetts Institute of Technology -->
+<!-- Copyright (c) 1996-1999 Matthew Wall                          -->
+
+</head>
+<body bgcolor="efefef" text="000000">
+
+<strong>Customizing <a href="GAlib.html">GAlib</a></strong><br>
+<i>version 2.4</i>
+<p>
+This document describes how to extend GAlib's capabilities by defining your own genomes and genetic operators.  The best way to customize the behavior of an object is to derive a new class.  If you do not want to do that much work, GAlib is designed to let you replace behaviors of existing objects by defining new functions.
+</p>
+<p>
+see also: <i><a href="Overview.html">library overview</a>, <a href="ClassHierarchy.html">class hierarchy</a>, <a href="API.html">programming interface</a></i>
+</p>
+
+<p>
+<strong>Table of contents</strong><br>
+<hr>
+<br>
+</p>
+
+<table>
+<tr valign=baseline>
+<td width=220>
+<ul>
+<strong>Genome</strong>
+<li><a href="#genome">Deriving a new Genome</a>
+<li><a href="#genome_testing">Testing a new Genome</a>
+<li><a href="#genome_initialization">Initialization</a>
+<li><a href="#genome_mutation">Mutation</a>
+<li><a href="#genome_crossover">Crossover</a>
+<li><a href="#genome_comparison">Comparison</a>
+<li><a href="#genome_evaluation">Evaluation</a>
+</ul>
+</td>
+
+<td width=6></td>
+
+<td width=180>
+<ul>
+<strong>Population</strong>
+<li><a href="#pop_initialization">Initialization</a>
+<li><a href="#pop_evaluation">Evaluation</a>
+<li><a href="#pop_scaling">Scaling</a>
+<li><a href="#pop_selection">Selection</a>
+</ul>
+</td>
+
+<td width=6></td>
+
+<td width=220>
+<ul>
+<strong>Genetic Algorithm</strong>
+<li><a href="#ga">Deriving a new Algorithm</a>
+<li><a href="#termination">Termination</a>
+</ul>
+</td>
+</tr>
+</table>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome">
+<br><strong>Deriving your own genome class</strong><br></a>
+<hr>
+You can create your own genome class by multiply-inheriting from the base genome class and your own data type.  For example, if you have already have an object defined, say MyObject, then you would derive a new genome class called MyGenome, whose class definition looks like this:
+<pre>
+// Class definition for the new genome object, including statically defined
+// declarations for default evaluation, initialization, mutation, and 
+// comparison methods for this genome class.
+class MyGenome : public MyObject, public GAGenome {
+public:
+  GADefineIdentity("MyGenome", 201);
+  static void Init(GAGenome&amp;);
+  static int Mutate(GAGenome&amp;, float);
+  static float Compare(const GAGenome&amp;, const GAGenome&amp;);
+  static float Evaluate(GAGenome&amp;);
+  static int Cross(const GAGenome&amp;, const GAGenome&amp;, GAGenome*, GAGenome*);
+
+public:
+  MyGenome() : GAGenome(Init, Mutate, Compare) { 
+    evaluator(Evaluate); 
+    crossover(Cross); 
+  }
+  MyGenome(const MyGenome&amp; orig) { copy(orig); }
+  virtual ~MyGenome() {}
+  MyGenome&amp; operator=(const GAGenome&amp; orig){
+    if(&amp;orig != this) copy(orig);
+    return *this;
+  }
+
+  virtual GAGenome* clone(CloneMethod) const {return new MyGenome(*this);}
+  virtual void copy(const GAGenome&amp; orig) {
+    GAGenome::copy(orig);  // this copies all of the base genome parts
+    // copy any parts of MyObject here
+    // copy any parts of MyGenome here
+  }
+
+  // any data/member functions specific to this new class
+};
+
+void 
+MyGenome::Init(GAGenome&amp;){
+  // your initializer here
+}
+
+int 
+MyGenome::Mutate(GAGenome&amp;, float){
+  // your mutator here
+}
+
+float 
+MyGenome::Compare(const GAGenome&amp;, const GAGenome&amp;){
+  // your comparison here
+}
+
+float 
+MyGenome::Evaluate(GAGenome&amp;){
+  // your evaluation here
+}
+
+int
+MyGenome::Cross(const GAGenome&amp; mom, const GAGenome&amp; dad,
+                GAGenome* sis, GAGenome* bro){
+  // your crossover here
+}
+</pre>
+<p>
+By convention, one of the arguments to a derived genome constructor is the objective function.  Alternatively (as illustrated in this example), you can hard code a default objective function into your genome - just call the <b>evaluator</b> member somewhere in your constructor and pass the function you want used as the default.
+</p>
+<p>
+Once you have defined your genome class, you should define the <a href="#genome_initialization">intialization</a>, <a href="#genome_mutation">mutation</a>, <a href="#genome_comparison">comparison</a>, and <a href="#genome_crossover">crossover</a> operators for it.  The comparison operator is optional, but if you do not define it you will not be able to use the diversity measures in the genetic algorithms and/or populations.
+</p>
+<p>
+Note that the genetic comparator is not necessarily the same as the boolean operator== and operator!= comparators.  The genetic comparator returns 0 if the two individuals are the same, -1 if the comparison fails for some reason, and a real number greater than 0 indicating the degree of difference if the individuals are not identical but can be compared.  It may be based on genotype or phenotype.  The boolean comparators, on the other hand, indicate only whether or not two individuals are identical.  In most cases, the boolean comparator can simply call the genetic comparator, but in some cases it is more efficient to define different operators (the boolean comparators are called much more often than the genetic comparators, especially if no diversity is being measured).
+</p>
+<p>
+  To work properly with the GAlib, you <i>must</i> define the following:
+</p>
+<pre>
+       MyGenome( -default-args-for-your-genome-constructor )
+       MyGenome(const MyGenome&amp;)
+       virtual GAGenome* clone(GAGenome::CloneMethod) const
+</pre>
+  If your genome adds any non-trivial member data, you must define these:
+<pre>
+       virtual ~MyGenome()
+       virtual copy(const GAGenome&amp;)
+       virtual int equal(const GAGenome&amp;) const
+</pre>
+  To enable streams-based reading and writing of your genome, you should define these:
+<pre>
+       virtual int read(istream&amp;)
+       virtual int write(ostream&amp;) const
+</pre>
+    When you derive a genome, don't forget to use the _evaluated flag to 
+  indicate when the state of the genome has changed and an evaluation is 
+  needed.  If a member function changes the state of your genome, that member
+  function should set the _evaluated flag to gaFalse.
+<p>
+    Assign a default crossover, mutation, initialization, and comparison
+    method so that users don't have to assign one unless they want to. 
+</p>
+<p>
+It is a good idea to define an identity for your genome (especially if you will be using it in an environment with multiple genome types running around).  Use the DefineIdentity macro (defined in id.h) to do this in your class definition.  The DefineIdentity macro sets a class ID number and the name that will be used in error messages for the class.  You can use any number above 200 for the ID, but be sure to use a different number for each of your classes.
+</p>
+<p>
+When run-time type information (RTTI) has stabilized across compilers, GAlib will probably use that instead of the Define/Declare identity macros.
+</p>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_testing">
+<br><strong>Genome Testing</strong><br></a>
+<hr>
+Use the following program to test your genome.  The basic idea here is to test incrementally in order to isolate problems as they arise.  If your genome works with a small test program such as this one, it will function properly with any genetic algorithm in GAlib.  (This is no guarantee, however, that your genome will help you find the solution to your problem.  That is another matter entirely.)
+<pre>
+int
+main() {
+  MyGenome genome;      // test default constructor (if we have one)
+  cout &lt;&lt; "genome after creation:\n" &lt;&lt; genome &lt;&lt; endl;
+
+  genome.initialize();  // test the initializer
+  cout &lt;&lt; "genome after initialization:\n" &lt;&lt; genome &lt;&lt; endl;
+
+  genome.mutate();      // test the mutator
+  cout &lt;&lt; "genome after mutation:\n" &lt;&lt; genome &lt;&lt; endl;
+
+  MyGenome* a = new MyGenome(genome);   // test copy constructor
+  MyGenome* b = new MyGenome(genome);
+
+  MyGenome* c = genome.clone(GAGenome::CONTENTS);
+  cout &lt;&lt; "clone contents:\n" &lt;&lt; *c &lt;&lt; "\n";
+  MyGenome* d = genome.clone(GAGenome::ATTRIBUTES);
+  cout &lt;&lt; "clone attributes:\n" &lt;&lt; *d &lt;&lt; "\n";
+
+  a->initialize();
+  b->initialize();
+  cout &lt;&lt; "parents:\n" &lt;&lt; *a &lt;&lt; "\n" &lt;&lt; *b &lt;&lt; "\n";
+
+  MyGenome::DefaultCrossover(*a, *b, c, d);   // test two child crossover
+  cout &lt;&lt; "children of crossover:\n" &lt;&lt; *c &lt;&lt; "\n" &lt;&lt; *d &lt;&lt; "\n";
+  MyGenome::DefaultCrossover(*a, *b, c, 0);   // test single child crossover
+  cout &lt;&lt; "child of crossover:\n" &lt;&lt; *c &lt;&lt; "\n";
+
+  a->compare(*b);       // test the comparator
+
+  delete a;
+  delete b;
+  delete c;
+  delete d;
+
+  return 0;
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_initialization">
+<br><strong>Genome Initialization</strong><br></a>
+<hr>
+The initializer takes a single argument:  the genome to be initialized.  The genome has already been allocated; the intializer only needs to populate it with appropriate contents.
+<p>
+Here is the implementation of an initializer for the GATreeGenome&lt;int&gt; class.
+</p>
+<pre>
+void
+TreeInitializer(GAGenome &amp; c)
+{
+  GATreeGenome&lt;int&gt; &amp;child=(GATreeGenome&lt;int&gt; &amp;)c;
+
+// destroy any pre-existing tree
+  child.root();
+  child.destroy();
+
+// Create a new tree with depth of 'depth' and each eldest node containing
+// 'n' children (the other siblings have none).
+  int depth=2, n=3, count=0;
+  child.insert(count++,GATreeBASE::ROOT);
+
+  for(int i=0; i&lt;depth; i++){
+    child.eldest();
+    child.insert(count++);
+    for(int j=0; j&lt;n; j++)
+      child.insert(count++,GATreeBASE::AFTER);
+  }
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_mutation">
+<br><strong>Genome Mutation</strong><br></a>
+<hr>
+The genome mutator takes two arguments:  the genome that will receive the mutation(s) and a mutation probability.  The exact meaning of the mutation probability is up to the designer of the mutation operator.  The mutator should return the number of mutations that occured.
+<p>
+Most genetic algorithms invoke the mutation method on each newly generated offspring.  So your mutation operator should base its actions on the value of the mutation probability.  For example, an array of floats could flip a <i>pmut</i>-biased coin for each element in the array.  If the coin toss returns true, the element gets a Gaussian mutation.  If it returns false, the element is left unchanged.  Alternatively, a single biased coin toss could be used to determine whether or not the <i>entire</i> genome should be mutated.
+</p>
+<p>
+Here is an implementation of the flip mutator for the GA1DBinaryString class.  This mutator flips a biased coin for each bit in the string.
+</p>
+<pre>
+int 
+GA1DBinStrFlipMutator(GAGenome &amp; c, float pmut)
+{
+  GA1DBinaryStringGenome &amp;child=(GA1DBinaryStringGenome &amp;)c;
+  if(pmut &lt;= 0.0) return(0);
+
+  int nMut=0;
+  for(int i=child.length()-1; i&gt;=0; i--){
+    if(GAFlipCoin(pmut)){
+      child.gene(i, ((child.gene(i) == 0) ? 1 : 0));
+      nMut++;
+    }
+  }
+  return nMut;
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_crossover">
+<br><strong>Genome Crossover</strong><br></a>
+<hr>
+The crossover method is used by the genetic algorithm to mate individuals from the population to form new offspring.  Each genome should define a default crossover method for the genetic algorithms to use.  The <b>sexual</b> and <b>asexual</b> member functions return a pointer to the preferred sexual and asexual mating methods, respectively.  The <b>crossover</b> member function is used to change the preferred mating method.  The genome does not have a member function to invoke the crossover; only the genetic algorithm can actually perform the crossover.
+<p>
+Some genetic algorithms use sexual mating, others use asexual mating.  If possible, define both so that your genome will work with either kind of genetic algorithm.  If your derived class does not define a cross method, an error message will be posted whenever crossover is attempted.
+</p>
+<p>
+Sexual crossover takes four arguments:  two parents and two children.  If one child is nil, the operator should be able to generate a single child.  The genomes have already been allocated, so the crossover operator should simply modify the contents of the child genome as appropriate.  The crossover function should return the number of crossovers that occurred.  Your crossover function should be able to operate on one or two children, so be sure to test the child pointers to see if the genetic algorithm is asking you to create one or two children.
+</p>
+<p>
+Here is an implementation of the two-parent/one-or-two-child single point crossover operator for fixed-length genomes of the GA1DBinaryStringGenome class.
+</p>
+<pre>
+int
+SinglePointCrossover(const GAGenome&amp; p1, const GAGenome&amp; p2, GAGenome* c1, GAGenome* c2){
+  GA1DBinaryStringGenome &amp;mom=(GA1DBinaryStringGenome &amp;)p1;
+  GA1DBinaryStringGenome &amp;dad=(GA1DBinaryStringGenome &amp;)p2;
+
+  int n=0;
+  unsigned int site = GARandomInt(0, mom.length());
+  unsigned int len = mom.length() - site;
+
+  if(c1){
+    GA1DBinaryStringGenome &amp;sis=(GA1DBinaryStringGenome &amp;)*c1;
+    sis.copy(mom, 0, 0, site);
+    sis.copy(dad, site, site, len);
+    n++;
+  }
+  if(c2){
+    GA1DBinaryStringGenome &amp;bro=(GA1DBinaryStringGenome &amp;)*c2;
+    bro.copy(dad, 0, 0, site);
+    bro.copy(mom, site, site, len);
+    n++;
+  }
+
+  return n;
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_comparison">
+<br><strong>Genome Comparison</strong><br></a>
+<hr>
+The comparison method is used for diversity calculations.  It compares two genomes and returns a number that is greater than or equal to zero.  A value of 0 means that the two genomes are identical (no diversity).  There is no maximum value for the return value from the comparator.  A value of -1 indicates that the diversity could not be calculated.
+<p>
+Here is the comparator for the binary string genomes.  It simply counts up the number of bits that both genomes share.  In this example, we return a -1 if the genomes are not the same length.
+</p>
+
+<pre>
+float
+GA1DBinStrComparator(const GAGenome&amp; a, const GAGenome&amp; b){
+  GA1DBinaryStringGenome &amp;sis=(GA1DBinaryStringGenome &amp;)a;
+  GA1DBinaryStringGenome &amp;bro=(GA1DBinaryStringGenome &amp;)b;
+  if(sis.length() != bro.length()) return -1;
+  float count = 0.0;
+  for(int i=sis.length()-1; i&gt;=0; i--)
+    count += ((sis.gene(i) == bro.gene(i)) ? 0 : 1);
+  return count/sis.length();
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="genome_evaluation">
+<br><strong>Genome Evaluation</strong><br></a>
+<hr>
+The genome evaluator is the objective function for your problem.  It takes a single genome as its argument.  The evaluator returns a number that indicates how good or bad the genome is.  You must cast the generic genome to the genome type that you are using.  If your objective function works with different genome types, then use the genome object's <b>className</b> and/or <b>classID</b> member functions to determine the genome class before you do the casts.
+<p>
+Here is a simple evaluation function for a real number genome with a single element.  The function tries to maximize a sinusoidal.
+</p>
+
+<pre>
+float
+Objective(GAGenome&amp; g){
+  GARealGenome&amp; genome = (GARealGenome &amp;)g;
+  return 1 + sin(genome.gene(0)*2*M_PI);
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="pop_initialization">
+<br><strong>Population Initialization</strong><br></a>
+<hr>
+This method is invoked when the population is initialized.
+<p>
+Here is an implemenation that invokes the initializer for each genome in the population.
+</p>
+
+<pre>
+void 
+PopInitializer(GAPopulation &amp; p){
+  for(int i=0; i&lt;p.size(); i++)
+    p.individual(i).initialize();
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="pop_evaluation">
+<br><strong>Population Evaluation</strong><br></a>
+<hr>
+This method is invoked when the population is evaluated.  If your objective is population-based, you can use this method to set the score for each genome rather than invoking an evaluator for each genome.
+<p>
+Here is an implementation that invokes the evaluation method for each genome in the population.
+</p>
+
+<pre>
+void 
+PopEvaluator(GAPopulation &amp; p){
+  for(int i=0; i&lt;p.size(); i++)
+    p.individual(i).evaluate();
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="pop_scaling">
+<br><strong>Scaling Scheme</strong><br></a>
+<hr>
+The scaling object does the transformation from raw (objective) scores to scaled (fitness) scores.  The most important member function you will have to define for a new scaling object is the <b>evaluate</b> member function.  This function calculates the fitness scores based on the objective scores in the population that is passed to it.
+<p>
+The GAScalingScheme class is a pure virtual (abstract) class and cannot be instantiated.  To make your derived class non-virtual, you <i>must</i> define the <b>clone</b> and <b>evaluate</b> functions.  You should also define the <b>copy</b> method if your derived class introduces any additional data members that require non-trivial copy.
+</p>
+<p>
+The scaling class is polymorphic, so you should define the object's identity using the GADefineIdentity macro.  This macro sets a class ID number and the name that will be used in error messages for the class.  You can use any number above 200 for the ID, but be sure to use a different number for each of your objects.
+</p>
+<p>
+Here is an implementation of sigma truncation scaling.
+</p>
+<pre>
+class SigmaTruncationScaling : public GAScalingScheme {
+public:
+  GADefineIdentity("SigmaTruncationScaling", 286);
+
+  SigmaTruncationScaling(float m=gaDefSigmaTruncationMultiplier) : c(m) {}
+  SigmaTruncationScaling(const SigmaTruncationScaling &amp; arg){copy(arg);}
+  SigmaTruncationScaling &amp; operator=(const GAScalingScheme &amp; arg)
+    { copy(arg); return *this; }
+  virtual ~SigmaTruncationScaling() {}
+  virtual GAScalingScheme * clone() const 
+    { return new SigmaTruncationScaling(*this); }
+  virtual void evaluate(const GAPopulation &amp; p);
+  virtual void copy(const GAScalingScheme &amp; arg){
+    if(&amp;arg != this &amp;&amp; sameClass(arg)){
+      GAScalingScheme::copy(arg);
+      c=((SigmaTruncationScaling&amp;)arg).c;
+    }
+  }
+  float multiplier(float fm) { return c=fm; }
+  float multiplier() const { return c; }
+protected:
+  float c;			// std deviation multiplier
+};
+
+
+void 
+SigmaTruncationScaling::evaluate(const GAPopulation &amp; p) {
+  float f;
+  for(int i=0; i&lt;p.size(); i++){
+    f = p.individual(i).score() - p.ave() + c * p.dev();
+    if(f &lt; 0) f = 0;
+    p.individual(i).fitness(f);
+  }
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="pop_selection">
+<br><strong>Selection Scheme</strong><br></a>
+<hr>
+The selection object is used to pick individuals from the population.  Before a selection occurs, the <b>update</b> method is called.  You can use this method to do any pre-selection data transformations for your selection scheme.  When a selection is requested, the <b>select</b> method is called.  The <b>select</b> method should return a reference to a single individual from the population.
+<p>
+A selector may make its selections based either on the scaled (fitness) scores or on the raw (objective) scores of the individuals in the population.  Note also that a population may be sorted either low-to-high or high-to-low, depending on which sort order was chosen.  Your selector should be able to handle either order (this way it will work with genetic algorithms that maximize or minimize).
+</p>
+<p>
+The selection scheme class is polymorphic, so you should define the object's identity using the GADefineIdentity macro.  This macro sets a class ID number and the name that will be used in error messages for the class.  You can use any number above 200 for the ID, but be sure to use a different number for each of your objects.
+</p>
+<p>
+Here is an implementation of a tournament selector.  It is based on the roulette wheel selector and shares some of the roulette wheel selector's functionality.  In particular, this tournament selector uses the roulette wheel selector's <b>update</b> method, so it does not define its own.  The <b>select</b> method does two fitness-proportionate selections then returns the individual with better score.
+</p>
+<pre>
+class TournamentSelector : public GARouletteWheelSelector {
+public:
+  GADefineIdentity("TournamentSelector", 255);
+
+  TournamentSelector(int w=GASelectionScheme::FITNESS) : 
+  GARouletteWheelSelector(w) {}
+  TournamentSelector(const TournamentSelector&amp; orig) { copy(orig); }
+  TournamentSelector&amp; operator=(const GASelectionScheme&amp; orig) 
+    { if(&amp;orig != this) copy(orig); return *this; }
+  virtual ~TournamentSelector() {}
+  virtual GASelectionScheme* clone() const
+    { return new TournamentSelector; }
+  virtual GAGenome&amp; select() const;
+};
+
+
+GAGenome &amp;
+TournamentSelector::select() const {
+  int picked=0;
+  float cutoff;
+  int i, upper, lower;
+
+  cutoff = GARandomFloat();
+  lower = 0; upper = pop-&gt;size()-1;
+  while(upper &gt;= lower){
+    i = lower + (upper-lower)/2;
+    if(psum[i] &gt; cutoff)
+      upper = i-1;
+    else
+      lower = i+1;
+  }
+  lower = Min(pop-&gt;size()-1, lower);
+  lower = Max(0, lower);
+  picked = lower;
+
+  cutoff = GARandomFloat();
+  lower = 0; upper = pop-&gt;size()-1;
+  while(upper &gt;= lower){
+    i = lower + (upper-lower)/2;
+    if(psum[i] &gt; cutoff)
+      upper = i-1;
+    else
+      lower = i+1;
+  }
+  lower = Min(pop-&gt;size()-1, lower);
+  lower = Max(0, lower);
+
+  GAPopulation::SortBasis basis = 
+    (which == FITNESS ? GAPopulation::SCALED : GAPopulation::RAW);
+  if(pop-&gt;order() == GAPopulation::LOW_IS_BEST){
+    if(pop-&gt;individual(lower,basis).score() &lt;
+       pop-&gt;individual(picked,basis).score())
+      picked = lower;
+  }
+  else{
+    if(pop-&gt;individual(lower,basis).score() &gt;
+       pop-&gt;individual(picked,basis).score())
+      picked = lower;
+  }
+
+  return pop-&gt;individual(picked,basis);
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="ga">
+<br><strong>Genetic Algorithm</strong><br></a>
+<hr>
+Here is a sample derived class that does restricted mating.  In this example, one of the parents is selected as usual.  The second individual is select as the first, but it is used only if it is similar to the first individual.  If not, we make another selection.  If enough selections fail, we take what we can get.
+
+<pre>
+class RestrictedMatingGA : public GASteadyStateGA {
+public:
+  GADefineIdentity("RestrictedMatingGA", 288);
+  RestrictedMatingGA(const GAGenome&amp; g) : GASteadyStateGA(g) {}
+  virtual ~RestrictedMatingGA() {}
+  virtual void step();
+  RestrictedMatingGA &amp; operator++() { step(); return *this; }
+};
+
+void
+RestrictedMatingGA::step()
+{ 
+  int i, k;
+  for(i=0; i&lt;tmpPop-&gt;size()-; i++){
+    mom = &amp;(pop-&gt;select()); 
+    k=0;
+    do { k++; dad = &amp;(pop-&gt;select()); }
+    while(mom-&gt;compare(*dad) &lt; THRESHOLD &amp;&amp; k&lt;pop-&gt;size());
+    stats.numsel += 2;
+    if(GAFlipCoin(pCrossover()))
+      stats.numcro += (*scross)(*mom, *dad, &amp;tmpPop-&gt;individual(i), 0);
+    else
+      tmpPop-&gt;individual(i).copy(*mom);
+    stats.nummut += tmpPop-&gt;individual(i).mutate(pMutation());
+  }
+
+  for(i=0; i&lt;tmpPop-&gt;size(); i++)
+    pop-&gt;add(tmpPop-&gt;individual(i));
+
+  pop-&gt;evaluate();		// get info about current pop for next time
+  pop-&gt;scale();			// remind the population to do its scaling
+
+  for(i=0; i&lt;tmpPop-&gt;size(); i++)
+    pop-&gt;destroy(GAPopulation::WORST, GAPopulation::SCALED);
+
+  stats.update(*pop);		// update the statistics by one generation
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="termination">
+<br><strong>Termination Function</strong><br></a>
+<hr>
+The termination function determines when the genetic algorithm should stop evolving.  It takes a genetic algorithm as its argument and returns gaTrue if the genetic algorithm should stop or gaFalse if the algorithm should continue.
+<p>
+Here are three examples of termination functions.  The first compares the current generation to the desired number of generations.  If the current generation is less than the desired number of generations, it returns gaFalse to signify that the GA is not yet complete.
+</p>
+<pre>
+GABoolean
+GATerminateUponGeneration(GAGeneticAlgorithm &amp; ga){
+  return(ga.generation() &lt; ga.nGenerations() ? gaFalse : gaTrue);
+}
+</pre>
+The second example compares the average score in the current population with the score of the best individual in the current population.  If the ratio of these exceeds a specified threshhold, it returns gaTrue to signify that the GA should stop.  Basically this means that the entire population has converged to a 'good' score.
+<pre>
+const float desiredRatio = 0.95;    // stop when pop average is 95% of best
+
+GABoolean
+GATerminateUponScoreConvergence(GAGeneticAlgorithm &amp; ga){
+  if(ga.statistics().current(GAStatistics::Mean) /
+     ga.statistics().current(GAStatistics::Maximum) &gt; desiredRatio)
+    return gaTrue;
+  else
+    return gaFalse;
+}
+</pre>
+The third uses the population diversity as the criterion for stopping.  If the diversity drops below a specified threshhold, the genetic algorithm will stop.
+<pre>
+const float thresh = 0.01;     // stop when population diversity is below this
+
+GABoolean
+StopWhenNoDiversity(GAGeneticAlgorithm &amp; ga){
+  if(ga.statistics().current(GAStatistics::Diversity) &lt; thresh)
+    return gaTrue;
+  else
+    return gaFalse;
+}
+</pre>
+A faster method of doing a nearly equivalent termination is to use the population's standard deviation as the stopping criterion (this method does not require comparisons of each individual).  Notice that this judges diversity based upon the genome scores rather than their actual genetic diversity.
+<pre>
+const float thresh = 0.01;     // stop when population deviation is below this
+
+GABoolean
+StopWhenNoDeviation(GAGeneticAlgorithm &amp; ga){
+  if(ga.statistics().current(GAStatistics::Deviation) &lt; thresh)
+    return gaTrue;
+  else
+    return gaFalse;
+}
+</pre>
+
+
+
+
+
+
+
+
+
+
+<hr>
+<small><i>Matthew Wall, 23 March 1996</i></small>
+
+</body></html>

@@ -1,0 +1,116 @@
+hp visualize c240
+
+HP-UX testouri B.11.00 A 9000/782 2008476391 two-user license
+
+randtest
+start:   Tue Dec 28 17:36:31 EST 2004
+finish:  Tue Dec 28 17:36:35 EST 2004
+
+ex1
+start:   Tue Dec 28 17:36:35 EST 2004
+finish:  Tue Dec 28 17:36:38 EST 2004
+
+ex2
+start:   Tue Dec 28 17:36:38 EST 2004
+finish:  Tue Dec 28 17:36:38 EST 2004
+
+ex3
+start:   Tue Dec 28 17:36:38 EST 2004
+finish:  Tue Dec 28 17:36:49 EST 2004
+
+ex4
+start:   Tue Dec 28 17:36:49 EST 2004
+finish:  Tue Dec 28 17:36:56 EST 2004
+
+ex5
+start:   Tue Dec 28 17:36:56 EST 2004
+finish:  Tue Dec 28 17:37:05 EST 2004
+
+ex6
+start:   Tue Dec 28 17:37:05 EST 2004
+finish:  Tue Dec 28 17:37:58 EST 2004
+
+ex7
+start:   Tue Dec 28 17:37:58 EST 2004
+finish:  Tue Dec 28 17:38:03 EST 2004
+
+ex8
+start:   Tue Dec 28 17:38:03 EST 2004
+finish:  Tue Dec 28 17:38:03 EST 2004
+
+ex9
+start:   Tue Dec 28 17:38:03 EST 2004
+finish:  Tue Dec 28 17:38:04 EST 2004
+
+ex10
+start:   Tue Dec 28 17:38:04 EST 2004
+finish:  Tue Dec 28 17:38:16 EST 2004
+
+ex11
+start:   Tue Dec 28 17:38:16 EST 2004
+finish:  Tue Dec 28 17:38:20 EST 2004
+
+ex12
+start:   Tue Dec 28 17:38:20 EST 2004
+finish:  Tue Dec 28 17:38:27 EST 2004
+
+ex13
+start:   Tue Dec 28 17:38:27 EST 2004
+finish:  Tue Dec 28 17:38:28 EST 2004
+
+ex14
+start:   Tue Dec 28 17:38:28 EST 2004
+finish:  Tue Dec 28 17:38:32 EST 2004
+
+ex15
+start:   Tue Dec 28 17:38:32 EST 2004
+finish:  Tue Dec 28 17:38:32 EST 2004
+
+ex16
+start:   Tue Dec 28 17:38:33 EST 2004
+finish:  Tue Dec 28 17:38:33 EST 2004
+
+ex17
+start:   Tue Dec 28 17:38:33 EST 2004
+finish:  Tue Dec 28 17:41:14 EST 2004
+
+ex18
+start:   Tue Dec 28 17:41:14 EST 2004
+finish:  Tue Dec 28 17:41:25 EST 2004
+
+ex19
+start:   Tue Dec 28 17:41:25 EST 2004
+finish:  Tue Dec 28 17:41:26 EST 2004
+
+ex20
+start:   Tue Dec 28 17:41:26 EST 2004
+finish:  Tue Dec 28 18:18:34 EST 2004
+
+ex21
+start:   Tue Dec 28 18:18:34 EST 2004
+finish:  Tue Dec 28 18:18:44 EST 2004
+
+ex22
+start:   Tue Dec 28 18:18:44 EST 2004
+finish:  Tue Dec 28 18:19:09 EST 2004
+
+ex23
+start:   Tue Dec 28 18:19:09 EST 2004
+finish:  Tue Dec 28 18:19:09 EST 2004
+
+ex24
+start:   Tue Dec 28 18:19:09 EST 2004
+finish:  Tue Dec 28 18:19:10 EST 2004
+
+ex25
+start:   Tue Dec 28 18:19:10 EST 2004
+finish:  Tue Dec 28 18:19:12 EST 2004
+
+ex26
+start:   Tue Dec 28 18:19:12 EST 2004
+finish:  Tue Dec 28 18:20:17 EST 2004
+
+ex27
+start:   Tue Dec 28 18:20:17 EST 2004
+finish:  Tue Dec 28 18:20:17 EST 2004
+

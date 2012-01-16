@@ -1,0 +1,114 @@
+IRIX64 sirene 6.5 10120733 IP30
+
+randtest
+start:   Tue Dec 28 21:07:58 EST 2004
+finish:  Tue Dec 28 21:07:59 EST 2004
+
+ex1
+start:   Tue Dec 28 21:07:59 EST 2004
+finish:  Tue Dec 28 21:08:01 EST 2004
+
+ex2
+start:   Tue Dec 28 21:08:01 EST 2004
+finish:  Tue Dec 28 21:08:01 EST 2004
+
+ex3
+start:   Tue Dec 28 21:08:01 EST 2004
+finish:  Tue Dec 28 21:08:05 EST 2004
+
+ex4
+start:   Tue Dec 28 21:08:05 EST 2004
+finish:  Tue Dec 28 21:08:08 EST 2004
+
+ex5
+start:   Tue Dec 28 21:08:08 EST 2004
+finish:  Tue Dec 28 21:08:14 EST 2004
+
+ex6
+start:   Tue Dec 28 21:08:14 EST 2004
+finish:  Tue Dec 28 21:08:53 EST 2004
+
+ex7
+start:   Tue Dec 28 21:08:53 EST 2004
+finish:  Tue Dec 28 21:08:55 EST 2004
+
+ex8
+start:   Tue Dec 28 21:08:55 EST 2004
+finish:  Tue Dec 28 21:08:55 EST 2004
+
+ex9
+start:   Tue Dec 28 21:08:55 EST 2004
+finish:  Tue Dec 28 21:08:55 EST 2004
+
+ex10
+start:   Tue Dec 28 21:08:55 EST 2004
+finish:  Tue Dec 28 21:09:07 EST 2004
+
+ex11
+start:   Tue Dec 28 21:09:07 EST 2004
+finish:  Tue Dec 28 21:09:10 EST 2004
+
+ex12
+start:   Tue Dec 28 21:09:10 EST 2004
+finish:  Tue Dec 28 21:09:15 EST 2004
+
+ex13
+start:   Tue Dec 28 21:09:15 EST 2004
+finish:  Tue Dec 28 21:09:16 EST 2004
+
+ex14
+start:   Tue Dec 28 21:09:16 EST 2004
+finish:  Tue Dec 28 21:09:18 EST 2004
+
+ex15
+start:   Tue Dec 28 21:09:18 EST 2004
+finish:  Tue Dec 28 21:09:18 EST 2004
+
+ex16
+start:   Tue Dec 28 21:09:18 EST 2004
+finish:  Tue Dec 28 21:09:19 EST 2004
+
+ex17
+start:   Tue Dec 28 21:09:19 EST 2004
+finish:  Tue Dec 28 21:10:25 EST 2004
+
+ex18
+start:   Tue Dec 28 21:10:25 EST 2004
+finish:  Tue Dec 28 21:10:30 EST 2004
+
+ex19
+start:   Tue Dec 28 21:10:30 EST 2004
+finish:  Tue Dec 28 21:10:30 EST 2004
+
+ex20
+start:   Tue Dec 28 21:10:30 EST 2004
+finish:  Tue Dec 28 21:24:53 EST 2004
+
+ex21
+start:   Tue Dec 28 21:24:53 EST 2004
+finish:  Tue Dec 28 21:25:00 EST 2004
+
+ex22
+start:   Tue Dec 28 21:25:00 EST 2004
+finish:  Tue Dec 28 21:25:13 EST 2004
+
+ex23
+start:   Tue Dec 28 21:25:13 EST 2004
+finish:  Tue Dec 28 21:25:13 EST 2004
+
+ex24
+start:   Tue Dec 28 21:25:13 EST 2004
+finish:  Tue Dec 28 21:25:13 EST 2004
+
+ex25
+start:   Tue Dec 28 21:25:13 EST 2004
+finish:  Tue Dec 28 21:25:14 EST 2004
+
+ex26
+start:   Tue Dec 28 21:25:14 EST 2004
+finish:  Tue Dec 28 21:25:58 EST 2004
+
+ex27
+start:   Tue Dec 28 21:25:58 EST 2004
+finish:  Tue Dec 28 21:25:58 EST 2004
+

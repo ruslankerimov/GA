@@ -1,0 +1,9 @@
+# settings for GAlib applications
+population_size		250
+mutation_probability	0.05
+crossover_probability	1.0
+score_filename		bog.dat
+score_frequency		1
+flush_frequency		0
+select_scores		31	# 1=mean, 2=max, 4=min, 8=dev, 16=div
+number_of_generations	40000

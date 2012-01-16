@@ -1,0 +1,46 @@
+! Application defaults for the graphic genetic algorithm program
+! Copyright (c) 1996 Matthew Wall
+! mbw 17jan96
+
+*bestColor: 		yellow
+*populationColor1: 	green
+*populationColor2: 	blue
+*populationColor3: 	cyan
+*populationColor4: 	orange
+*populationColor5: 	red
+*ga: 			2
+*genome: 		0
+*function: 		3
+*generationsPerStep: 	10
+
+*background:		thistle4
+
+*leftOffset:		3
+*rightOffset:		3
+*topOffset:		3
+*bottomOffset:		3
+
+*canvas.width:		400
+*canvas.height:		300
+*canvas.background:	black
+
+! these are motif-specific
+
+*fontList:	-*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*
+
+*score.labelString:	score
+*stats.labelString:	stats
+*params.labelString:	params
+
+! these are athena-specific
+
+*font:		-*-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*
+
+*rewind.label:		reset
+*stop.label:		stop
+*step.label:		one
+*some.label:		some
+*evolve.label:		all
+*score.label:		score
+*stats.label:		stats
+*params.label:		params

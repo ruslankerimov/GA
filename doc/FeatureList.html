@@ -1,0 +1,94 @@
+<html><head><title>GAlib: List of Features</title>
+
+<!-- by matthew wall                           all rights reserved -->
+<!-- Copyright (c) 1995-1996 Massachusetts Institute of Technology -->
+<!-- Copyright (c) 1996-1999 Matthew Wall                          -->
+
+</head>
+<body bgcolor="efefef" text="000000">
+<strong>Feature List for <a href="GAlib.html">GAlib</a></strong><br>
+<i><small>version 2.4</small></i>
+<hr>
+
+<strong>General features</strong>
+<ul>
+  <li>Many examples are included illustrating the use of various GAlib
+       features, class derivations, parallelization, deterministic crowding,
+       travelling salesman, DeJong, and Royal Road problems.
+  <li>The library has been used on various DOS/Windows, Windows NT/95, MacOS,
+       and UNIX configurations.  GAlib compiles without warnings on most
+       major compilers.
+  <li>Templates are used in some genome classes, but GAlib can be used without
+       templates if your compiler does not understand them.
+  <li>Four random number generators are included with the library.  You can
+       select the one most appropriate for your system, or use your own.
+</ul>
+
+<strong>Algorithms, Parameters, and Statistics</strong>
+<ul>
+  <li>GAlib can be used with PVM (parallel virtual machine) to evolve
+       populations and/or individuals in parallel on multiple CPUs.
+  <li>Genetic algorithm parameters can be configured from file, command-line,
+       and/or code.
+  <li>Overlapping (steady-state GA) and non-overlapping (simple GA)
+       populations are supported.  You can also specify the amount of overlap
+       (% replacement).  The distribution includes examples of other derived
+       genetic algorithms such as a genetic algorithm with sub-populations and
+       another that uses deterministic crowding.
+  <li>New genetic algorithms can be quickly tested by deriving from the base
+       genetic algorithm classes in the library.  In many cases you need only
+       overide one virtual function.
+  <li>Built-in termination methods include convergence and
+       number-of-generations.  The termination method can be customized for
+       any existing genetic algorithm class or for new classes you derive.
+  <li>Speciation can be done with either DeJong-style crowding (using a
+       replacement strategy) or Goldberg-style sharing (using fitness scaling).
+  <li>Elitism is optional for non-overlapping genetic algorithms.
+  <li>Built-in replacement strategies (for overlapping populations) include
+       replace parent, replace random, replace worst.  The replacement
+       operator can be customized.
+  <li>Built-in selection methods include rank, roulette wheel, tournament,
+       stochastic remainder sampling, stochastic uniform sampling, and
+       deterministic sampling.  The selection operator can be customized.
+  <li>"on-line" and "off-line" statistics are recorded as well as max, min,
+       mean, standard deviation, and diversity.  You can specify which
+       statistics should be recorded and how often they should be flushed
+       to file.
+</ul>
+
+<strong>Genomes and Operators</strong>
+<ul>
+  <li>Chromosomes can be built from <i>any</i> C++ data type.  You can use
+       the types built-in to the library (bit-string, array, list, tree) or
+       derive a chromosome based on your own objects.
+  <li>Built-in chromosome types include real number arrays, list, tree, 1D,
+       2D, and 3D arrays, 1D, 2D, and 3D binary string.  The binary strings,
+       strings, and arrays can be variable length.  The lists and trees can
+       contain any object in their nodes.  The array can contain any object
+       in each element.
+  <li>All chromosome initialization, mutation, crossover, and comparison
+       methods can be customized.
+  <li>Built-in initialization operators include uniform random,
+       order-based random, allele-based random, and initialize-to-zero.
+  <li>Built-in mutation operators include random flip, random
+       swap, Gaussian, destructive, swap subtree, swap node.
+  <li>Built-in crossover operators include arithmetic, blend, partial match,
+       ordered, cycle, single point, two point, even, odd, uniform, node- and
+       subtree-single point.  Edge recombination is included in the examples.
+  <li>Dominance and Diploidy are not explicitly built in to the library, but
+       any of the genome classes in the library can easily be extended to
+       become diploid chromosomes.
+</ul>
+
+<strong>Objective function</strong>
+<ul>
+  <li>Objective functions can be population- or individual-based.
+  <li>If the built-in genomes adequately represent your problem, a
+       user-specified objective function is the only problem-specific code
+       that <i>must</i> be written.
+</ul>
+
+<hr>
+<small><i>Matthew Wall, 19 August 1996</i></small>
+
+</body></html>

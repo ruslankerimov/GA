@@ -1,0 +1,21 @@
+# sample settings for GAlib applications
+
+# GAlib expects parameters in name-value pairs.  The name should be a single
+# string (no whitespace allowed).  The value should be of a type appropriate
+# for the named parameter.  Anything after a # character will be ignored.
+# The file must end with a blank line.  If you specify parameters that depend
+# on other parameters, the last parameter will override the first or act on
+# data modified by the first (the parameters are applied in the order they 
+# are listed).
+
+population_size		100
+mutation_probability	0.01
+crossover_probability	0.9
+score_filename		bog.dat
+score_frequency		1
+flush_frequency		25
+select_scores		7	# 1=mean, 2=max, 4=min, 8=dev, 16=div
+#select_scores		31
+number_of_generations	10
+#replacement_percentage	0.8
+#replacement_number	10

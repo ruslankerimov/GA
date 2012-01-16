@@ -1,0 +1,33 @@
+# -*- Mode: makefile -*-
+# Makefile to build GAlib with Borland tools
+# Copyright (c) 1996-2005 Matthew Wall, all rights reserved
+
+all: lib ex
+
+lib:
+	cd ga
+	make -f makefile.bcc
+	cd ..
+
+ex:
+	cd examples
+	make -f makefile.bcc
+	cd ..
+
+test:
+	cd examples
+	make -f makefile.bcc test
+	cd ..
+
+clean:
+	cd ga
+	make -f makefile.bcc clean
+	cd ..
+	cd examples
+	make -f makefile.bcc clean
+	cd ..
+
+install:
+	cd ga
+	make -f makefile.bcc install
+	cd ..

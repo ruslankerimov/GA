@@ -1,0 +1,832 @@
+./randtest: Random Number Test
+Using the RAN2 random number generator (RNG).
+Using specified random seed 555
+Library thinks the random seed is 555
+
+running the chi-square test for randomness of the RNG...
+ (there will be some failures of the chi-square test)
+  integer test (1000):  chi-squared should be within 20 of 100
+    run #0	93.2	
+    run #1	101.52	
+    run #2	119.752	
+    run #3	103.175	
+    run #4	130.718	***failed***
+    run #5	118.672	
+    run #6	93.8672	
+    run #7	101.787	
+    run #8	132.579	***failed***
+    run #9	114.258	
+  integer test (10000):  chi-squared should be within 20 of 100
+    run #0	88.2	
+    run #1	87.82	
+    run #2	77.3	***failed***
+    run #3	81.22	
+    run #4	94.18	
+    run #5	113.46	
+    run #6	102.72	
+    run #7	94.24	
+    run #8	71.24	***failed***
+    run #9	117.86	
+  integer test (10000):  chi-squared should be within 20 of 100
+    run #0	109.12	
+    run #1	113.06	
+    run #2	133.26	***failed***
+    run #3	99.82	
+    run #4	109.18	
+    run #5	90.52	
+    run #6	100.58	
+    run #7	101.34	
+    run #8	93.74	
+    run #9	89.38	
+  integer test (100000):  chi-squared should be within 20 of 100
+    run #0	119.2	
+    run #1	99.978	
+    run #2	110.9	
+    run #3	103.678	
+    run #4	82.366	
+    run #5	102.464	
+    run #6	91.632	
+    run #7	86.788	
+    run #8	109.812	
+    run #9	86.968	
+Example 1
+
+This program tries to fill a 2DBinaryStringGenome with
+alternating 1s and 0s using a SimpleGA
+
+The GA found:
+0101010101
+1010101010
+0101010101
+1010101010
+0101010101
+
+Example 2
+
+This program generates a sequence of random numbers then uses
+a simple GA and binary-to-decimal genome to match the
+sequence.
+
+input sequence:
+  0.265886    54.6261          3   -2.85019    69151.2 0.00150462          2 
+random values in the genome:
+  0.980392    18.4314          3   -4.34118    23997.6 0.00276471   0.494118 
+the ga generated:
+  0.278431    54.5098          3   -2.87059    2450.59 0.00163529    2.00392 
+
+best of generation data are in 'bog.dat'
+Example 3
+
+This program reads in a data file then runs a simple GA whose
+objective function tries to match the pattern of bits that are
+in the data file.
+
+input pattern:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+best of generation data are in 'bog.dat'
+the ga generated:
+  *       *                     
+          * * * * *             
+      * *   *         * *       
+    *                 *   *     
+    *     * * *   * *     *     
+  *               * *   *   *   
+  *               *         *   
+  * *           *     * *     * 
+  *       *           *     *   
+    *         *       *   *   * 
+*         * * * * * *   * *     
+      * *                       
+          * * * * * * *         
+              *     *           
+
+Example 4
+
+This program tries to fill a 3DBinaryStringGenome with
+alternating 1s and 0s using a SteadyStateGA
+
+the ga generated:
+0101010101
+1010101010
+0101010101
+1010101010
+0101010101
+
+1010101010
+0101010101
+1010101010
+0101010101
+1010101010
+
+0101010101
+1010101010
+0101010101
+1010101010
+0101010101
+
+
+best of generation data are in 'bog.dat'
+Example 5
+
+This program shows how to use a composite genome.  It reads
+a matrix from a data file and a set of values to be matched in
+a binary-to-decimal genome then uses a steady-state GA to
+match the pattern and value set.
+
+input pattern:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+input sequence:
+10.2 32.5 66 99.234 0.003 210 
+
+the ga generated:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+8.3767 32.4286 55.2418 101.924 0.00209011 150.615 
+
+Example 6
+
+This example uses a SteadyState GA and Tree<int> genome.  It
+tries to maximize the size of the tree genomes that it
+contains.  The genomes contain ints in its nodes.
+
+8653 nodes, 120 levels deep.
+best of generation data are in 'bog.dat'
+Example 7
+
+This program reads in a data file then runs a steady-state GA 
+whose objective function tries to match the pattern of bits that
+are in the data file.
+
+input pattern:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+the ga generated:
+        *             *         
+          * * * * *             
+      * *           * * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+*   *     * * * * * * *   *     
+      * *             * *       
+          * * * * * *     *     
+                                
+
+best of generation data are in 'bog.dat'
+Example 8
+
+This program runs a steady-state GA whose objective function
+tries to maximize the size of the list and tries to make lists
+that contain the number 101 in the nodes.  The lists contain
+ints in the nodes.
+
+the list contains 0 nodes
+the ga used the parameters:
+minimaxi	1
+number_of_generations	50
+generations_to_convergence	20
+convergence_percentage	0.99
+crossover_probability	0.6
+mutation_probability	0.05
+population_size	40
+score_frequency	1
+flush_frequency	10
+record_diversity	0
+score_filename	bog.dat
+select_scores	7
+number_of_best	1
+replacement_percentage	0.5
+replacement_number	20
+
+Example 9
+
+This program finds the maximum value in the function
+  y = - x1^2 - x2^2
+with the constraints
+     -5 <= x1 <= 5
+     -5 <= x2 <= 5
+
+
+the ga found an optimum at the point (7.62951e-05, 0.00328069)
+
+best of generation data are in 'bog.dat'
+Example 10
+
+This program uses sharing to do speciation.  The objective
+function has more than one optimum, so different genomes
+may have equally high scores.  Speciation keeps the population
+from clustering at one optimum.
+  Both gene-wise and phenotype-wise distance functions are used.
+  Populations from all three runs are written to the files 
+pop.nospec.dat, pop.genespec.dat and pop.phenespec.dat.  The
+function is written to the file sinusoid.dat
+
+running with no speciation (fitness proportionate scaling)...
+the ga found an optimum at the point 3.2549
+running the ga with speciation (sharing using bit-wise)...
+the ga found an optimum at the point 2.2549
+running the ga with speciation (sharing using phenotype-wise)...
+the ga found an optimum at the point 4.2549
+dumping the function to file...
+Example 11
+
+This program illustrates the use of order-based lists.  The
+list in this problem contains 25 numbers, 0 to 24.  It tries
+to put them in descending order from 24 to 0.
+
+the ga generated the following list (objective score is 24):
+24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0 
+best of generation data are in 'bog.dat'
+minimaxi	1
+number_of_generations	1000
+generations_to_convergence	20
+convergence_percentage	0.99
+crossover_probability	0.6
+mutation_probability	0.01
+population_size	30
+score_frequency	10
+flush_frequency	10
+record_diversity	0
+score_filename	bog.dat
+select_scores	2
+number_of_best	1
+replacement_percentage	0.5
+replacement_number	15
+
+Example 12
+
+This program illustrates the use of order-based strings.  The
+string in this problem contains 26 letters, a to z.  It tries
+to put them in alphabetic order.
+
+the ga generated the following string (objective score is 26):
+abcdefghijklmnopqrstuvwxyz
+GAStringGenome
+Example 13
+
+This program runs a GA-within-GA.  The outer level GA tries to
+match the pattern read in from a file.  The inner level GA is
+run only when the outer GA reaches a threshhold objective score
+then it tries to match a sequence of numbers that were generated
+randomly at the beginning of the program's execution.
+
+You might have to run the primary GA for more than 5000
+generations to get a score high enough to kick in the secondary
+genetic algorithm.  Use the ngen option to do this on the
+command line.
+
+input pattern:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+input sequence:
+  0.265886    54.6261          3   -2.85019    69151.2 0.00150462          2 
+the ga generated:
+  *   *       *     *       * * 
+        * *     * *           * 
+      *               *         
+    * * * *             * *     
+  * * * *   *     *       *     
+  *       * * * * *         *   
+          *   *   *     *   *   
+        *   *     *   *   * * * 
+  *       *     *       * * * * 
+* * *   *     *   * *   * *   * 
+*   * *   * *     * * *   *     
+    * * *                 *   * 
+    * *       *   * *     *     
+    * *           * *           
+
+  0.411765    12.9412          3   -2.16471    74143.5 0.00749412    6.17647 
+
+best of generation data are in 'bog.dat'
+Example 14
+
+This example shows how to create a genome that contains
+a list of lists.  We create a composite genome that has
+lists in it.  Each list has some nodes, only one of which
+contains the number 0.  The objective is to move the node with
+number 0 in it to the nth position where n is the number of the
+list within the composite genome.
+
+a randomly-generated set of paths:
+list 0:	28 20 21 22 25 24 0 26 23 27 
+list 1:	22 20 23 21 0 24 25 26 28 27 
+list 2:	20 23 21 28 27 24 22 26 0 25 
+list 3:	0 20 21 22 23 24 27 26 25 28 
+list 4:	0 28 21 22 23 24 27 26 20 25 
+list 5:	28 27 21 26 23 24 25 22 20 0 
+
+the ga generated:
+list 0:	0 26 24 22 25 23 27 28 21 20 
+list 1:	24 0 20 26 23 22 25 27 21 28 
+list 2:	21 26 0 22 23 20 25 27 28 24 
+list 3:	24 21 22 0 23 27 25 20 26 28 
+list 4:	24 26 23 21 0 20 22 28 27 25 
+list 5:	20 26 21 25 23 0 24 22 27 28 
+
+Example 15
+
+This program generates a sequence of random numbers then uses
+a simple GA and binary-to-decimal genome to match the
+sequence.  It uses the convergence of the best-of-generation
+as the criterion for when to stop.
+
+input sequence:
+  0.265886    54.6261          3   -2.85019    69151.2 0.00150462          2 
+random values in the genome:
+  0.419608     85.098          3   -4.90588       6760 0.00834118    5.92941 
+the ga generated:
+  0.247059    49.8039          3   -2.74118    60823.5 0.00156471    2.00392 
+
+Example 16
+
+This example uses a SteadyState GA and Tree<int> genome.  It
+tries to maximize the size of the tree genomes that it
+contains.  The genomes contain points in its nodes.  Two
+different runs are made:  first with the swap subtree mutator,
+second with the destructive mutator.
+
+initializing...evolving for 10 generations.............
+the ga generated a tree with 37 nodes, 9 levels deep.
+
+initializing...evolving for 10 generations.............
+the ga generated a tree with 35 nodes, 12 levels deep.
+Example 17
+
+This program illustrates the use of a 2DArrayGenome with
+three alleles.  It tries to fill a 2D array with alternating
+0s and 1s, and -1s at the corners.  You will have to run it
+for something like 10000 generations to get the perfect score.
+
+evolving...........................................................................................................................................................................................................
+
+the ga generated:
+ -1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 -1
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+ -1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1 -1
+
+Example 18
+
+This program is designed to compare the GA types.  You can
+specify steady-state, incremental, or simple GA and tweak any
+of the parameters for each of these GA types.  The objective
+function tries to match a pattern read in from a file.
+
+input pattern:
+                                
+          * * * * * *           
+      * *             * *       
+    *                     *     
+    *     * *     * *     *     
+  *       * *     * *       *   
+  *                         *   
+  *                         *   
+  *                         *   
+    *   *             *   *     
+    *     * * * * * *     *     
+      * *             * *       
+          * * * * * *           
+                                
+
+the ga generated:
+      *                         
+          *   * * * *           
+        *             *         
+    *     * *             *     
+    *   * * *     * *     *   * 
+  *       * *     * *       *   
+  *         *               *   
+  *                         *   
+  *                     *   *   
+    *   *                 *     
+    *     * * * * * *     *     
+      * *             * *       
+*         * * * * *             
+                                
+
+the statistics for the run are:
+400	# current generation
+0.990521	# current convergence
+12000	# number of selections since initialization
+10776	# number of crossovers since initialization
+2707	# number of mutations since initialization
+12000	# number of replacements since initialization
+11051	# number of genome evaluations since initialization
+201	# number of population evaluations since initialization
+211	# maximum score since initialization
+88	# minimum score since initialization
+182.65	# average of all scores ('on-line' performance)
+187.255	# average of maximum scores ('off-line' performance)
+178.162	# average of minimum scores ('off-line' performance)
+
+112.9	# mean score in initial population
+127	# maximum score in initial population
+88	# minimum score in initial population
+7.63996	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+207.2	# mean score in current population
+211	# maximum score in current population
+203	# minimum score in current population
+2.49689	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+10	# how often to record scores
+50	# how often to write scores to file
+bog.dat	# name of file to which scores are written
+
+the objective function was called 11051 times
+
+best of generation data are in 'bog.dat'
+Example 19
+
+This program runs the DeJong test problems.
+
+running DeJong function number 1 ...
+the ga generated:
+5.11 -5.12 -5.12 
+
+the statistics for the run are:
+400	# current generation
+1	# current convergence
+3200	# number of selections since initialization
+2481	# number of crossovers since initialization
+152	# number of mutations since initialization
+2800	# number of replacements since initialization
+2524	# number of genome evaluations since initialization
+401	# number of population evaluations since initialization
+78.5409	# maximum score since initialization
+0.342654	# minimum score since initialization
+77.4228	# average of all scores ('on-line' performance)
+78.006	# average of maximum scores ('off-line' performance)
+77.0203	# average of minimum scores ('off-line' performance)
+
+25.943	# mean score in initial population
+76.0281	# maximum score in initial population
+0.342654	# minimum score in initial population
+14.6341	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+78.5409	# mean score in current population
+78.5409	# maximum score in current population
+78.5409	# minimum score in current population
+7.75982e-06	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+10	# how often to record scores
+50	# how often to write scores to file
+bog.dat	# name of file to which scores are written
+
+best-of-generation data are in 'bog.dat'
+Example 20
+
+Running Holland's Royal Road test problem with a genome that is
+240 bits long (16 blocks).  The parameters are as follows: 
+
+	block size: 8
+	  gap size: 7
+	        m*: 4
+	        u*: 1
+	         u: 0.3
+	         v: 0.02
+
+
+the ga generated:
+110010100110101111111110100011010111000001101111111110010111011000111001011110001010011100111111111000101111111110110001100110011010111011110000011011011000110101000111111110111000101000111111001111111110011001001110010111101111111110101000
+the highest level achieved was 1
+
+the statistics for the run are:
+10000	# current generation
+1	# current convergence
+2560000	# number of selections since initialization
+2305756	# number of crossovers since initialization
+613723	# number of mutations since initialization
+2560000	# number of replacements since initialization
+2360486	# number of genome evaluations since initialization
+10001	# number of population evaluations since initialization
+4.52	# maximum score since initialization
+-0.06	# minimum score since initialization
+4.51608	# average of all scores ('on-line' performance)
+4.51795	# average of maximum scores ('off-line' performance)
+4.51532	# average of minimum scores ('off-line' performance)
+
+0.541289	# mean score in initial population
+1.9	# maximum score in initial population
+-0.06	# minimum score in initial population
+0.303989	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+4.52001	# mean score in current population
+4.52	# maximum score in current population
+4.52	# minimum score in current population
+1.38418e-05	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+20	# how often to record scores
+100	# how often to write scores to file
+bog.dat	# name of file to which scores are written
+
+the parameters for the run are:
+minimaxi	1
+number_of_generations	10000
+generations_to_convergence	20
+convergence_percentage	0.99
+crossover_probability	0.9
+mutation_probability	0.001
+population_size	512
+score_frequency	20
+flush_frequency	100
+record_diversity	0
+score_filename	bog.dat
+select_scores	2
+number_of_best	1
+replacement_percentage	0.5
+replacement_number	256
+Example 21
+
+This example shows various uses of the allele set object
+in combination with the real number genome.
+
+
+running ga number 1 (alternate allele(0) and allele(3))...
+the ga generated:
+-10 10 -10 10 -10 10 -10 10 
+
+running ga number 2 (continuous descending order)...
+the ga generated:
+0.722113 0.690404 0.475627 0.443254 0.413628 0.307699 0.286382 0.0776234 
+
+running ga number 2a (descending order, EXCLUSIVE)...
+the ga generated:
+0.877096 0.635132 0.0272497 0.92776 0.512969 0.228361 0.17755 0.021867 
+
+running ga number 3 (discretized ascending order)...
+the ga generated:
+2.5 3 4 4.5 6 7 9 9.5 
+
+running ga number 4 (maximize each gene)...
+the ga generated:
+10 100 -5 -0.0001 11000 
+Example 22
+
+This example shows how to derive your own genetic algorithm
+class.  Here we use a custom, single-child crossover and a
+modified replacement strategy with overlapping populations.
+
+initializing...
+evolving..........
+
+dumping the function to file...
+initial population is in 'pop.initial.dat'
+final population is in 'pop.final.dat'
+the function is in 'sinusoid.dat'
+parameters were:
+
+minimaxi	1
+number_of_generations	500
+generations_to_convergence	20
+convergence_percentage	0.99
+crossover_probability	1
+mutation_probability	0.01
+population_size	100
+score_frequency	10
+flush_frequency	100
+record_diversity	0
+score_filename	bog.dat
+select_scores	255
+number_of_best	1
+replacement_percentage	0.25
+replacement_number	25
+
+Example 23
+
+This program tries to maximize or minimize, depending on the
+command line argument that you give it.  Use the command-line
+argument 'mm -1' to minimize (the default for this example), or
+'mm 1' to maximize.  The objective function is a simple 
+sinusoidal.
+
+printing initial population to file...
+printing final population to file...
+printing function to file...
+Example 24
+
+This example illustrates how to derive your own genetic
+algorithm.  This genetic algorithm does restricted mating and
+uses a selector slightly more finicky than a uniform random
+selector.  The objective function is a simple sinusoidal.
+
+printing population to file 'population.dat'...
+printing function to file 'sinusoid.dat'...
+Example 25
+
+This example uses a genetic algorithm with multiple populations.
+
+initializing...evolving.......................................................................................................
+best individual is: 11111111111111111111111111111111
+
+100	# current generation
+1	# current convergence
+13000	# number of selections since initialization
+12500	# number of crossovers since initialization
+12024	# number of mutations since initialization
+12500	# number of replacements since initialization
+12650	# number of genome evaluations since initialization
+1005	# number of population evaluations since initialization
+1	# maximum score since initialization
+0	# minimum score since initialization
+0.163021	# average of all scores ('on-line' performance)
+0.984688	# average of maximum scores ('off-line' performance)
+0	# average of minimum scores ('off-line' performance)
+
+0.1125	# mean score in initial population
+0.6875	# maximum score in initial population
+0	# minimum score in initial population
+0.255937	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+0.166667	# mean score in current population
+1	# maximum score in current population
+0	# minimum score in current population
+0.379049	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+1	# how often to record scores
+0	# how often to write scores to file
+generations.dat	# name of file to which scores are written
+
+Example 26
+
+The Travelling Salesman Problem (TSP) demo program.
+
+initializing...evolving...10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 210 220 230 240 250 260 270 280 290 300 310 320 330 340 350 360 370 380 390 400 410 420 430 440 450 460 470 480 490 500 510 520 530 540 550 560 570 580 590 600 610 620 630 640 650 660 670 680 690 700 710 720 730 740 750 760 770 780 790 800 810 820 830 840 850 860 870 880 890 900 910 920 930 940 950 960 970 980 990 1000 the shortest path found is 22.6503
+this is the distance from the sequence
+5 6 10 14 18 19 15 11 7 3 2 1 20 0 4 8 12 16 17 13 9 
+
+1000	# current generation
+1	# current convergence
+100000	# number of selections since initialization
+100000	# number of crossovers since initialization
+10014	# number of mutations since initialization
+100000	# number of replacements since initialization
+100100	# number of genome evaluations since initialization
+1001	# number of population evaluations since initialization
+64.3227	# maximum score since initialization
+22.6503	# minimum score since initialization
+23.1626	# average of all scores ('on-line' performance)
+23.2062	# average of maximum scores ('off-line' performance)
+23.0545	# average of minimum scores ('off-line' performance)
+
+54.0745	# mean score in initial population
+64.3227	# maximum score in initial population
+44.4397	# minimum score in initial population
+4.07012	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+22.6503	# mean score in current population
+22.6503	# maximum score in current population
+22.6503	# minimum score in current population
+2.66312e-06	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+100	# how often to record scores
+0	# how often to write scores to file
+generations.dat	# name of file to which scores are written
+
+Example 27
+
+Deterministic crowding demonstration program.
+
+In addition to the standard GAlib command-line arguments,
+you can specify one of the four following functions:
+   0 - modified Himmelblau's function
+   1 - Foxholes (25)
+   2 - Schwefel's nasty (1 glob. Max bei (420.96/420.96)
+   3 - Mexican Hat (optimum at 0,0)
+
+best individual is 3.00116 1.99599 
+
+100	# current generation
+0.999999	# current convergence
+10000	# number of selections since initialization
+5000	# number of crossovers since initialization
+245	# number of mutations since initialization
+953	# number of replacements since initialization
+5100	# number of genome evaluations since initialization
+101	# number of population evaluations since initialization
+10	# maximum score since initialization
+5.06768	# minimum score since initialization
+9.90808	# average of all scores ('on-line' performance)
+9.99984	# average of maximum scores ('off-line' performance)
+9.35657	# average of minimum scores ('off-line' performance)
+
+8.84823	# mean score in initial population
+9.99917	# maximum score in initial population
+5.06768	# minimum score in initial population
+1.05433	# standard deviation of initial population
+-1	# diversity of initial population (0=identical,-1=unset)
+
+9.99484	# mean score in current population
+10	# maximum score in current population
+9.96593	# minimum score in current population
+0.00755568	# standard deviation of current population
+-1	# diversity of current population (0=identical,-1=unset)
+
+20	# how far back to look for convergence
+100	# how often to record scores
+0	# how often to write scores to file
+generations.dat	# name of file to which scores are written
+

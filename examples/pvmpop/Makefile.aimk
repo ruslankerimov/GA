@@ -1,0 +1,59 @@
+# makefile for compiling the PVM example for GAlib
+# Copyright (c) 1995-1996 Massachusetts Institute of Technology
+# mbwall 5dec95
+#
+# This makefile is designed to be used with aimk (that comes with pvm3).  You
+# should set the PVM_ROOT and PVM_ARCH environment variables as described in
+# the PVM documentation.  For our configuration, I have set them like this:
+#
+#    setenv PVM_ROOT= /usr/local/pvm3
+#    setenv PVM_ARCH= `$PVM_ROOT/lib/pvmgetarch`
+#
+# (I do this in my .cshrc file)  Your mileage may vary.  You can 'hardcode'
+# the directories here in the makefile if you like, but then you won't be able
+# to compile on different architectures without changing this file.  XDIR is 
+# the location of your PVM binaries.  Do a simple 'aimk' first, then, if 
+# everything went OK, do 'aimk install' and that will move the binaries to your
+# PVM executables directory.  When you use aimk it will create a subdirectory
+# in the current directory for each architecture on which you try to compile.
+
+SDIR= ..
+BDIR= $(HOME)/pvm3/bin
+XDIR= $(BDIR)/$(PVM_ARCH)
+VPATH= $(SDIR)
+
+CC_INC_DIR=/usr/include/CC
+INC_DIRS= -I$(SDIR)/. -I$(SDIR)/../..    -I${PVM_ROOT}/include
+LIB_DIRS= -L$(SDIR)/. -L$(SDIR)/../../ga -L${PVM_ROOT}/lib/${PVM_ARCH}
+LIBS= -lpvm3 -lga -lm
+
+CCFLAGS= +w +pp -O -g $(INC_DIRS)
+C++C= DCC
+
+SRCS= master.C slave.C genome.C
+
+all: master slave
+
+master.o: $(SDIR)/master.C
+	$(C++C) $(CCFLAGS) -c $(SDIR)/master.C
+slave.o: $(SDIR)/slave.C
+	$(C++C) $(CCFLAGS) -c $(SDIR)/slave.C
+genome.o: $(SDIR)/genome.C
+	$(C++C) $(CCFLAGS) -c $(SDIR)/genome.C
+PVMDemeGA.o: $(SDIR)/PVMDemeGA.C
+	$(C++C) $(CCFLAGS) -c $(SDIR)/PVMDemeGA.C
+
+master: $$@.o genome.o PVMDemeGA.o
+	$(C++C) $@.o genome.o PVMDemeGA.o -o $@ $(LIB_DIRS) $(LIBS)
+
+slave: $$@.o genome.o
+	$(C++C) $@.o genome.o -o $@ $(LIB_DIRS) $(LIBS)
+
+install: master slave $(XDIR)
+	mv master slave $(XDIR)
+
+$(XDIR):
+	- mkdir $(BDIR) $(XDIR)
+
+clean:
+	rm -rf *~ *.bak *.out *.o core master slave ii_files

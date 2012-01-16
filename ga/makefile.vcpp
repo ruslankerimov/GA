@@ -1,0 +1,46 @@
+# -*- Mode: makefile -*-
+# Copyright (c) 1994-1996 Massachusetts Institute of Technology
+# Copyright (c) 1996-2005 Matthew Wall
+# -----------------------------------------------------------------------------
+
+!include ../makevars.vcpp
+!include makefile.sources
+
+CXXFLAGS = $(CXXFLAGS) /I..
+
+STATIC = $(LIB_NAME)
+LIB    = $(STATIC).lib
+
+all: $(LIB)
+
+$(LIB): $(OBJS) 
+	$(AR) $(ARFLAGS) /out:$(LIB) $?
+	@echo $(LIB_NAME) is now up-to-date
+
+install: install.lib install.hdr
+	@echo installation complete
+
+install.lib: $(LIB) lib_directories
+	$(INSTALL) $(LIB) $(LIB_DEST_DIR)
+
+install.hdr: hdr_directories
+	@for %i in ( $(HDRS) ) do \
+          $(CP) /Q %i $(HDR_DEST_DIR)\$(LIB_NAME)
+	@for %i in ( $(TMPL_SRCS) ) do \
+          $(CP) /Q %i $(HDR_DEST_DIR)\$(LIB_NAME)
+
+lib_directories:
+	@if not exist $(LIB_DEST_DIR) \
+          $(MKDIR) $(LIB_DEST_DIR)
+hdr_directories:
+	@if not exist $(HDR_DEST_DIR)\$(LIB_NAME) \
+          $(MKDIR) $(HDR_DEST_DIR)\$(LIB_NAME)
+
+remove:
+	$(RM) $(LIB_DEST_DIR)\$(LIB)
+	$(RM) $(HDR_DEST_DIR)\$(LIB_NAME)
+
+clean:
+	$(RM) *.obj *.o *.pdb vc*
+	$(RM) $(LIB_NAME).lib
+

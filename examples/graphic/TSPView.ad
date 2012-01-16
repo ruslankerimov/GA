@@ -1,0 +1,8 @@
+! Application defaults for the TSP demo program
+! mbw 17jan96
+
+TSPView*background:	thistle4
+TSPView.function:	0
+
+TSPView*canvas.width:	500
+TSPView*canvas.height:	300

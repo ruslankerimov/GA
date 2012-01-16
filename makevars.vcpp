@@ -1,0 +1,79 @@
+# -*- Mode: makefile -*-
+# Copyright (c) 1999-2005 Matthew Wall, all rights reserved
+# makefile variables for compiling on windows
+# -----------------------------------------------------------------------------
+
+LIB_NAME= ga
+
+### Set these directories to whatever is appropriate for your system.  These 
+### used only if you do a 'make install'.  They specify where the library and
+### header files should be installed.
+DESTDIR=c:\temp
+HDR_DEST_DIR=$(DESTDIR)\include
+LIB_DEST_DIR=$(DESTDIR)\lib
+
+
+MKDEPEND    = echo
+MKDIR       = mkdir
+CP          = xcopy
+RM          = del /f
+
+CXX         = cl.exe
+LD          = link.exe
+AR          = lib.exe
+INSTALL     = copy
+
+
+# Here is a quick summary of the switches that cause much grief.  These are
+# for the microsoft visual c++ compilers.
+#
+# switch  thread   dll/exe   library
+# /MD     multi    DLL       MSCVRT.LIB
+# /ML     single   EXE       LIBC.LIB
+# /MT     multi    EXE       LIBCMT.LIB
+#
+# /GR     enable RTTI
+# /GX     enable synchronous exception handling
+# /YX     automate precompiled header
+# /FD     generate file dependencies
+
+CFLAGS   = /nologo /D_WINDOWS /DWIN32 /D_MBCS /W3 /GR /GX /TP
+LFLAGS   = /nologo /subsystem:console /incremental:no
+
+!ifdef RELEASE_BUILD
+CXXDLLFLAGS  = $(CFLAGS) /DNDEBUG /MD /O2 
+CXXLIBFLAGS  = $(CFLAGS) /DNDEBUG /MT /O2 
+CXXEXEFLAGS  = $(CFLAGS) /DNDEBUG /MT /O2
+LINKFLAGS    = $(LFLAGS)
+!else
+CXXDLLFLAGS  = $(CFLAGS) /D_DEBUG /MDd /Od /Zi
+CXXLIBFLAGS  = $(CFLAGS) /D_DEBUG /MTd /Od /Zi 
+CXXEXEFLAGS  = $(CFLAGS) /D_DEBUG /MTd /Od /Zi 
+LINKFLAGS    = $(LFLAGS) /debug 
+!endif
+
+!ifdef SHARED_BUILD
+!ifdef LIBRARY_BUILD
+CXXFLAGS  = $(CXXDLLFLAGS) /DCOMPILE_GALIB_AS_DLL /D_USRDLL
+LINKFLAGS = $(LINKFLAGS) /dll
+!else
+CXXFLAGS  = $(CXXEXEFLAGS) /DUSE_GALIB_AS_DLL
+LINKFLAGS = $(LINKFLAGS)
+!endif
+!else
+!ifdef LIBRARY_BUILD
+CXXFLAGS  = $(CXXLIBFLAGS) /DCOMPILE_GALIB_AS_LIB /D_LIB
+LINKFLAGS = $(LINKFLAGS)
+!else
+CXXFLAGS  = $(CXXEXEFLAGS) /DUSE_GALIB_AS_LIB
+LINKFLAGS = $(LINKFLAGS)
+!endif
+!endif
+
+LDFLAGS  = $(LINKFLAGS)
+ARFLAGS  = /nologo
+
+.SUFFIXES:
+.SUFFIXES: .C
+.C.o:
+	$(CXX) $(CXXFLAGS) /c $< /Fo$*.o

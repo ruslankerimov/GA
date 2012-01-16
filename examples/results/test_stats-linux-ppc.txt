@@ -1,0 +1,116 @@
+powermac g3 400MHz yellow dog linux 3
+
+Linux gammelost 2.4.22-2f #1 Sun Nov 9 16:49:49 EST 2003 ppc ppc ppc GNU/Linux
+
+randtest
+start:   Tue Dec 28 22:52:17 EST 2004
+finish:  Tue Dec 28 22:52:18 EST 2004
+
+ex1
+start:   Tue Dec 28 22:52:18 EST 2004
+finish:  Tue Dec 28 22:52:19 EST 2004
+
+ex2
+start:   Tue Dec 28 22:52:19 EST 2004
+finish:  Tue Dec 28 22:52:19 EST 2004
+
+ex3
+start:   Tue Dec 28 22:52:19 EST 2004
+finish:  Tue Dec 28 22:52:21 EST 2004
+
+ex4
+start:   Tue Dec 28 22:52:21 EST 2004
+finish:  Tue Dec 28 22:52:23 EST 2004
+
+ex5
+start:   Tue Dec 28 22:52:23 EST 2004
+finish:  Tue Dec 28 22:52:26 EST 2004
+
+ex6
+start:   Tue Dec 28 22:52:26 EST 2004
+finish:  Tue Dec 28 22:52:54 EST 2004
+
+ex7
+start:   Tue Dec 28 22:52:54 EST 2004
+finish:  Tue Dec 28 22:52:55 EST 2004
+
+ex8
+start:   Tue Dec 28 22:52:55 EST 2004
+finish:  Tue Dec 28 22:52:55 EST 2004
+
+ex9
+start:   Tue Dec 28 22:52:55 EST 2004
+finish:  Tue Dec 28 22:52:56 EST 2004
+
+ex10
+start:   Tue Dec 28 22:52:56 EST 2004
+finish:  Tue Dec 28 22:53:03 EST 2004
+
+ex11
+start:   Tue Dec 28 22:53:03 EST 2004
+finish:  Tue Dec 28 22:53:05 EST 2004
+
+ex12
+start:   Tue Dec 28 22:53:05 EST 2004
+finish:  Tue Dec 28 22:53:07 EST 2004
+
+ex13
+start:   Tue Dec 28 22:53:07 EST 2004
+finish:  Tue Dec 28 22:53:08 EST 2004
+
+ex14
+start:   Tue Dec 28 22:53:08 EST 2004
+finish:  Tue Dec 28 22:53:09 EST 2004
+
+ex15
+start:   Tue Dec 28 22:53:09 EST 2004
+finish:  Tue Dec 28 22:53:10 EST 2004
+
+ex16
+start:   Tue Dec 28 22:53:10 EST 2004
+finish:  Tue Dec 28 22:53:10 EST 2004
+
+ex17
+start:   Tue Dec 28 22:53:10 EST 2004
+finish:  Tue Dec 28 22:53:43 EST 2004
+
+ex18
+start:   Tue Dec 28 22:53:43 EST 2004
+finish:  Tue Dec 28 22:53:45 EST 2004
+
+ex19
+start:   Tue Dec 28 22:53:45 EST 2004
+finish:  Tue Dec 28 22:53:46 EST 2004
+
+ex20
+start:   Tue Dec 28 22:53:46 EST 2004
+finish:  Tue Dec 28 23:01:15 EST 2004
+
+ex21
+start:   Tue Dec 28 23:01:15 EST 2004
+finish:  Tue Dec 28 23:01:19 EST 2004
+
+ex22
+start:   Tue Dec 28 23:01:19 EST 2004
+finish:  Tue Dec 28 23:01:29 EST 2004
+
+ex23
+start:   Tue Dec 28 23:01:29 EST 2004
+finish:  Tue Dec 28 23:01:29 EST 2004
+
+ex24
+start:   Tue Dec 28 23:01:29 EST 2004
+finish:  Tue Dec 28 23:01:29 EST 2004
+
+ex25
+start:   Tue Dec 28 23:01:29 EST 2004
+finish:  Tue Dec 28 23:01:30 EST 2004
+
+ex26
+start:   Tue Dec 28 23:01:30 EST 2004
+finish:  Tue Dec 28 23:01:54 EST 2004
+
+ex27
+start:   Tue Dec 28 23:01:54 EST 2004
+finish:  Tue Dec 28 23:01:55 EST 2004
+

@@ -1,0 +1,26 @@
+2005-01-11  Matthew Wall  <mwall@localhost.localdomain>
+
+	* graphic/gaview.C: keep gcc3 happy.
+
+2005-01-06  Matthew Wall  <mwall@localhost.localdomain>
+
+	* randtest.C: accommodate some strangeness from ms vcpp 7
+
+2004-12-28  Matthew Wall  <mwall@localhost.localdomain>
+
+	* makefile.win32: added time stamps (sort of) and for loop.  windows
+	scripting *really* sucks.
+	* makefile: do not assume that . is in the path
+	* ex8.C: adhere to c++ standard
+	* ex11.C: adhere to c++ standard
+	* ex14.C: adhere to c++ standard
+	* ex16.C: adhere to c++ standard
+	* ex17.C: adhere to c++ standard
+	* ex26.C: adhere to c++ standard
+	* ex6.C: adhere to c++ standard
+
+2004-12-28  Matthew Wall  <mwall@gouda.local>
+
+	* ex15.C: avoid unsigned int comparison warning
+	* ex13.C: avoid unsigned in comparison warning
+

@@ -1,0 +1,49 @@
+# -*- Mode: makefile -*-
+# Copyright (c) 1999-2005 Matthew Wall, all rights reserved
+# -----------------------------------------------------------------------------
+#   To make all of the examples, do 'make'.  You can compile any one of
+# the examples by typing 'make exN' where N is the number of the example you
+# want to compile.  See the README for a description of what each example does.
+# -----------------------------------------------------------------------------
+
+!include ../makevars.vcpp
+GA_LIB=$(LIB_NAME).lib
+
+# Set these paths to the location of the GA library and headers.
+#GA_INC_DIR= /usr/local/include
+#GA_LIB_DIR= /usr/local/lib
+GA_INC_DIR= ..
+GA_LIB_DIR= ..\ga
+
+INC_DIRS= /I$(GA_INC_DIR)
+LIB_DIRS= /LIBPATH:$(GA_LIB_DIR)
+
+CXXFLAGS= $(CXXFLAGS) $(INC_DIRS)
+
+EXECS=randtest.exe\
+ ex1.exe  ex2.exe  ex3.exe  ex4.exe  ex5.exe  ex6.exe  ex7.exe  ex8.exe  ex9.exe\
+ ex10.exe ex11.exe ex12.exe ex13.exe ex14.exe ex15.exe ex16.exe ex17.exe ex18.exe\
+ ex19.exe ex20.exe ex21.exe ex22.exe ex23.exe ex24.exe ex25.exe ex26.exe ex27.exe
+
+all: $(EXECS)
+
+$(EXECS): $*.o
+	$(LD) $(LDFLAGS) $*.o /out:$*.exe $(LIB_DIRS) $(GA_LIB)
+
+clean:
+	$(RM) test_results.txt test_stats.txt
+	$(RM) *.dat
+	$(RM) *.exe
+	$(RM) *.pdb
+	$(RM) *.o
+	$(RM) vc*
+
+DATESTAMP=echo exit | cmd /q /k prompt $$D $$T
+test: $(EXECS)
+	@echo running tests.  this could take up to 1/2 hour, depending on
+	@echo the speed of your computer.  monitor test_results.txt and
+	@echo test_stats.txt to see what is happening.
+	@echo results > test_results.txt
+	@echo stats > test_stats.txt
+	@for %%x in ( $(EXECS) ) do \
+          @echo %%x && echo %%x >> test_stats.txt && $(DATESTAMP) >> test_stats.txt && %%x seed 555 >> test_results.txt && $(DATESTAMP) >> test_stats.txt

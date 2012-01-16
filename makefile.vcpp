@@ -1,0 +1,33 @@
+# -*- Mode: makefile -*-
+# Makefile to build GAlib with Microsoft tools
+# Copyright (c) 1996-2005 Matthew Wall, all rights reserved
+
+all: lib ex
+
+lib:
+	cd ga
+	nmake /nologo /f makefile.vcpp
+	cd ..
+
+ex:
+	cd examples
+	nmake /nologo /f makefile.vcpp
+	cd ..
+
+test:
+	cd examples
+	nmake /nologo /f makefile.vcpp test
+	cd ..
+
+clean:
+	cd ga
+	nmake /nologo /f makefile.vcpp clean
+	cd ..
+	cd examples
+	nmake /nologo /f makefile.vcpp clean
+	cd ..
+
+install:
+	cd ga
+	nmake /nologo /f makefile.vcpp install
+	cd ..

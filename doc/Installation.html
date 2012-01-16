@@ -1,0 +1,280 @@
+<html><head><title>GAlib:  Installation Instructions</title>
+
+<!-- by matthew wall                           all rights reserved -->
+<!-- Copyright (c) 1995-1996 Massachusetts Institute of Technology -->
+<!-- Copyright (c) 1996-2005 Matthew Wall                          -->
+
+</head>
+<body bgcolor="efefef" text="000000">
+<strong>Installation Instructions for <a href="GAlib.html">GAlib</a></strong>
+<p>
+There are two things to build: the library and the examples.
+</p>
+<p>
+First check the makevars file and uncomment the block of variables appropriate for your operating system and compiler.
+</p>
+<p>
+To build, test, and install GAlib you should be able to type:
+<pre>
+  % make
+  % make test
+  % make install
+</pre>
+</p>
+<p>
+Depending on your compiler and operating system, you may have to edit the gaconfig.h header file in the ga directory.  It has preprocessor directives set up for some of the compilers/OSes on which I have been able to test.  First try compiling without editting gaconfig.h.  If that does not work, then read the comments in gaconfig.h and adjust that file as needed.
+</p>
+<p>
+Here are specific instructions for various platforms and issues:
+<ul>
+<li><a href="#unix">UNIX</a>
+<li><a href="#mac">MacOS</a>
+<li><a href="#win">Windows 9x/NT/2K/XP</a>
+<li><a href="#dos">DOS/Win3</a>
+<br><br>
+<li><a href="#custom">Custom Configurations</a>
+<li><a href="#instantiation">Template Instatiation Issues</a>
+<li><a href="#notemplates">No Templates</a>
+</ul>
+</p>
+<p>
+Be sure to read over the section about template instantiation if your compiler starts to choke and spew errors.  Most errors people encounter are linker errors and are typically due to template instantiation problems.
+</p>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="unix"><strong>Unix compilation:</strong><br></a><hr>
+Edit the file 'makevars'.  This file contains the compiler flags that are unique for each cpu/os/compiler, as well as the destination directory for doing 'make install'.
+</p>
+To build the library and the non-graphic examples:
+<pre>
+  % make
+</pre>
+To test the library by running all of the examples:
+<pre>
+  % make test
+</pre>
+To install GAlib on your system:
+<pre>
+  % make install
+</pre>
+To build the graphic examples:
+<pre>
+  % cd examples/graphic; make
+</pre>
+<p>
+If you are compiling the graphic examples or the parallel examples, take a look at the makefile for each one to make sure that it is configured appropriately for your system.
+</p>
+<p>
+If the examples fail to build, it might be due to the type of make you are using.  In the file examples/makefile, be sure that the right rule is being used.  If you use GNU make, uncomment the "Use this for gnu make" section, otherwise uncomment the "Use this for non-gnu make" make section.
+</p>
+<p>
+Some people using g++ (typically version 2.9x) have reported compiler errors that complain about memset not being declared properly.  Typical error messages look like this:
+       <blockquote><code><pre>
+../ga/objective.h: In method `GAObjectiveVector::GAObjectiveVector(unsigned int, float (*)(const GAObjectiveVector &amp;))':
+In file included from ../ga/genome.h:33,
+                 from ../ga/ga.h:99,
+                 from ga.C:20:
+../ga/objective.h:68: warning: ANSI C++ forbids implicit conversion from `void *' in assignment
+../ga/objective.h:68: warning: implicit declaration of function `int memset(...)"
+       </pre></code></blockquote>
+This seems to be due to an error in the string.h header file in the gnu installation, <i>not</i> a problem in galib.  Evidently some versions of g++ have an incomplete string.h in the lib/g++-include directory.  Try using the -I compiler flag to force g++ to use a valid string.h (or update your gnu installation to replace the bogus string.h file).
+</p>
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="mac"><strong>MacOS compilation:</strong><br></a><hr>
+Set the includes path so that the directory in which the GAlib headers are located is searched before the system includes.  Set the compiler to use strict ANSI compilation.  Set the development environment to use the C++ compiler on .C files.
+</p>
+<p>
+Adding the string genome or real number genome source files to a project may cause the compilation to fail (depending on your compiler).  They are designed to be included by other source files rather than being compiled themselves.  They contain specializations of template classes.
+</p>
+<p>
+The GAlib site contains project files for some mac compilers.  Each of these expands to a projects directory that contains stationery for creating the examples and a sample project for creating the library.  You can either build the library then link to it from subsequent projects, or you can include specific GAlib files in each new project that you create.
+</p>
+<p>
+If you cannot get the library to build right out-of-the-box, you may need to edit gaconfig.h to tailor GAlib to your OS/compiler configuration.  When you edit gaconfig.h, use directives similar to those defined for __MWERKS__
+</p>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="win"><strong>Windows:</strong><br></a><hr>
+There are two makefiles for windows:  makefile.vcpp (for microsoft compilers) and makefile.bcc (for borland compilers).  These contain rules for building a static library which you can then include in any other project.
+</p>
+<p>
+Set the includes path so that the directory in which the GAlib headers are located is searched.  Also, set the compiler to use strict ANSI compilation.  Set the development environment to use the C++ compiler on .C files (this is the /TP flag in MS Visual C++).  Enable RTTI in Visual C++.
+</p>
+<p>
+Adding the string genome or real number genome source files to a project may cause the compilation to fail (depending on your compiler).  They are designed to be included by other source files rather than being compiled themselves.  They contain specializations of template classes.
+</p>
+<p>
+The GAlib site contains project files for some PC compilers.  You can either build the library then link to it from subsequent projects, or you can include specific GAlib files in each new project that you create.
+</p>
+<p>
+Microsoft's Visual C++ compiler complains about statements such as <code>float x = 0.0;</code>  To disable these warnings, insert the following into the gaconfig.h file:
+       <pre>
+       #if defined(_MSC_VER)
+       #pragma warning (disable : 4244)
+       #pragma warning (disable : 4305)
+       #endif
+       </pre>
+If you want to use GAlib with MFC, then be sure to turn off streams by undefining GALIB_USE_STREAMS in the gaconfig.h file:
+       <pre>
+       //#define GALIB_USE_STREAMS
+       </pre>
+This will compile GAlib with no dependency upon the streams library and may avoid conflicts with MFC streams use.
+</p>
+<p>
+If you cannot get the library to build right out-of-the-box, first try changing your compiler settings (particularly if you are using VC++).  Then edit gaconfig.h to tailor GAlib to your OS/compiler configuration.
+</p>
+<p>
+I find it easiest to compile from the command line rather than using VC++ projects.  On NT/2K/XP with visual c++, use nmake to do the build like this:
+<pre>
+       make /nologo /f makefile.vcpp
+</pre>
+Or, to make life easier, create a file called make.bat with the following in it and put it in your path:
+<pre>
+       nmake /nologo /f makefile.vcpp %1 %2 %3
+</pre>
+Then you can simply type 'make' or 'make install'.
+</p>
+If you are using the Borland compiler, use make to do the build like this:
+<pre>
+       make -f makefile.bcc
+</pre>
+<p>
+If you want to build the graphic examples, be sure to download the windows-specific packages in addition to GAlib itself.  They are called gademo.zip and tspdemo.zip.
+</p>
+<p>
+If you prefer to compile GAlib using a project, then see the project_files directory on the ftp server for some examples.  I no longer maintain these project files, but they will give you an idea of how to set things up.
+</p>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="dos"><strong>DOS/Win compilation:</strong><br></a><hr>
+When compiling under DOS or Win3.1, use the large memory model.  When you compile the library by itself, use a library page size of 32.  
+</p>
+<p>
+Be sure to set the includes path so that the directory in which the GAlib headers are located is searched.  Also, set the compiler to use strict ANSI compilation.  Be sure that GALIB_USE_STREAMS is not defined (do this in gaconfig.h) if you want to compile GAlib with no dependency upon the streams library.
+</p>
+<p>
+Adding the string genome or real number genome source files to a project may cause the compilation to fail (depending on your compiler).  They are designed to be included by other source files rather than being compiled themselves.  They contain specializations of template classes.
+</p>
+<p>
+By default, the library is configured to use the system's 'rand' random number generator when compiled with the Borland compiler.  This is because I've had problems with the better RNGs (ran2) in 16-bit mode.  If you are compiling a 32-bit application and you're using a Borland compiler, you should edit gaconfig.h so that USE_RAND is not defined.  In any event, be sure to check the integrity of the random number generator by building and running the randtest example as soon as you build the library.
+</p>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="custom"><strong>Custom compilation:</strong><br></a><hr>
+Edit the gaconfig.h file.  You should read the comments in gaconfig.h so that you know what the machine- and compiler-specific options are.  You can set these options either by #define-ing the macros in gaconfig.h or by defining them using your compiler's pre-processor directives.  I have put a few compiler-specific #defines in gaconfig.h, but I don't know the characteristics of all the compilers, nor do I know the compiler-specific preprocessor directives.
+</p>
+<p>
+Be sure to set the includes path so that your compiler knows where to look for the GAlib header files.  Also, be sure the compiler is using a strict ANSI compilation mode.
+</p>
+<p>
+You can either compile a library or only the parts of GAlib that you need.  In either case, see the listing below to determine which files you will need.
+</p>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="instantiation"><strong>Template instantiation issues</strong><br></a>
+<hr>
+If your compiler uses the Cfront automatic instantiation model (code repositories) you should not have to do anything special.
+</p>
+<p>
+If your compiler uses the Borland automatic instantiation model (all template code must be in the header files), then define the BORLAND_INST macro.  This will cause all of the header files with template classes to include the associated source files.  If your compiler uses this method of template instantiation, you do not need to include any of the template source files in your project.  These include GAAllele.C GA1DArrayGenome.C, GA2DArrayGenome.C, GA3DArrayGenome.C, GAListGenome.C, GAList.C, GATreeGenome.C, GATree.C)
+</p>
+
+</p>
+<p>
+If your compiler does not do automatic instantiation (for example, g++ 2.6.8) then define the NO_AUTO_INST macro.  This will force an instantiation in the source files that specialize template classes (for example, the GAStringGenome).  Note that there are (at least) two different syntaxes for forcing instantiation.  The GNU compiler likes 'template class' before the forced instantiation, but the Borland compiler does not.
+</p>
+<p>
+The symptoms of no automatic instantiation are linker warnings about member functions not being found (or defined) for template classes (e.g. GAAlleleSet<float> when you're using real number genomes, or GAAlleleSet<char> when you're using string genomes).
+</p>
+<p>
+The string and real number genomes are treated differently than the other genomes in GAlib because they are specializations  of template classes.  They are not included in the ga.h header so that they will not force instantiations where they are not needed.
+</p>
+<p>
+Do not explicitly compile GARealGenome.C or GAStringGenome.C!  These are specializations of template classes and should be included once (and only once) in one of your source files.  If you are using a real number genome, include GARealGenome.h in any file that refers to a real number genome and include GARealGenome.C in one (and only one) location in your code.  GARealGenome.C contains a specialization of the one-dimensional array class, so by including it in a single location you will tell the compiler to use the specialization rather than the generic template code.  The string genome is also a specialization of the one-dimensional array genome, so to use it you should follow the same guidelines (but include the string genome header and source rather than the real number genome header and source).
+</p>
+
+
+
+
+
+<br>
+<br>
+<br>
+<p>
+<a name="notemplates"><strong>What to do if your compiler does not understand templates</strong><br></a>
+<hr>
+If your compiler does not support templates, get one that does :)
+</p>
+<p>
+You can compile the library by defining the GALIB_USE_NO_TEMPLATES preprocessor directive.  If you do this, you can use only the BinaryString genomes (1D, 2D, and 3D).  All of the other genomes are implemented as template classes.  If you define the GALIB_USE_NO_TEMPLATES directive then you should not compile the following files:
+</p>
+<blockquote>
+GAAllele.C GA1DArrayGenome.C GA2DArrayGenome.C GA3DArrayGenome.C <br>
+GAListGenome.C GAListBASE.C GAList.C <br>
+GATreeGenome.C GATreeBASE.C GATree.C 
+</blockquote>
+If you need one of the template genome types but do not have a compiler that understands templates, you can modify the template files by hand.  You will have to create a file for each type that you want to instantiate.  If you will be instantiating only one type, remove &lt;T&gt; and replace T with the type you are going to instantiate.  If you will be instantiating more than one type then you will have to replace &lt;T&gt; with an appropriate name and replace T with the type.  For example, to create an instance of an 'int' version of the tree object, GATree&lt;int&gt; would become GATreeInt and any occurances of 'T * var' would be replaced with 'int * var'.
+
+<p>
+<hr>
+<small><i>Matthew Wall, 12 November 1996, updated January 2005</i></small>
+</p>
+
+</body></html>

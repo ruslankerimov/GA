@@ -1,0 +1,4353 @@
+<html><head><title>GAlib: programming interface</title>
+
+<!-- by matthew wall                           all rights reserved -->
+<!-- Copyright (c) 1995-1996 Massachusetts Institute of Technology -->
+<!-- Copyright (c) 1996-1999 Matthew Wall                          -->
+
+</head>
+<body bgcolor="efefef" text="000000">
+<strong>Programming interface for <a href="GAlib.html">GAlib</a> classes</strong><br>
+<i>version 2.4</i>
+<p>
+This document describes the programming interface for the library.  The section for each class contains a description of the object's purpose followed by the creator signature and member functions.  There are also sections for library constants, typedefs, and function signatures.
+</p>
+<p>
+see also: <i><a href="Overview.html">library overview</a>, <a href="ClassHierarchy.html">class hierarchy</a>, <a href="Extensions.html">customization</a></i>
+</p>
+
+
+<br>
+<big><strong>Table of contents</strong></big><br>
+<hr>
+
+<table border=0 cellspacing=0 cellpadding=6>
+<tr valign=baseline>
+<td width="50%">
+<ul>
+  <p>
+  <strong>General library information</strong><br>
+  <li><a href="#typedefs">typedefs and enumerations</a>
+  <li><a href="#signatures">function prototypes</a>
+  <li><a href="#constants">globals and default values</a>
+  <li><a href="#random">random number functions</a>
+  <li><a href="#errors">error handling</a>
+       </p>
+       <p>
+       <strong>Genetic Algorithm</strong><br>
+  <li><a href="#ga_base">GA base class</a>
+  <li><a href="#ga_overlapping">GA with overlapping populations (steady-state)</a>
+  <li><a href="#ga_non_overlapping">GA with non-overlapping populations (simple)</a>
+  <li><a href="#ga_incremental">GA with 1 or 2 children per generation (incremental)</a>
+  <li><a href="#ga_deme">GA with parallel, migrating populations (deme)</a>
+       </p>
+       <p>
+  <li><a href="#defparms">parameters and command-line options</a>
+  <li><a href="#parameters">parameter list object</a>
+  <li><a href="#statistics">statistics object</a>
+  <li><a href="#completion">completion functions</a>
+  <li><a href="#replacement">replacement schemes</a>
+       </p>
+       <p>
+       <strong>Population, Scaling, and Selection</strong><br>
+  <li><a href="#pop">population</a>
+  <li><a href="#selection">selection schemes</a>
+  <li><a href="#scaling">fitness scaling schemes</a>
+       </p>
+</ul>
+</td>
+
+<td width=6></td>
+
+<td width="50%">
+<ul>
+  <p>
+  <strong>Genomes</strong><br>
+  <li><a href="#genome_base">genome base class</a>
+  <li><a href="#genome_1dbinstr">1D binary string genome</a>
+  <li><a href="#genome_2dbinstr">2D binary string genome</a>
+  <li><a href="#genome_3dbinstr">3D binary string genome</a>
+  <li><a href="#genome_bin2dec">binary-to-decimal genome</a>
+  <li><a href="#genome_1darray">1D array genome</a>
+  <li><a href="#genome_1darrayallele">1D array genome with alleles</a>
+  <li><a href="#genome_2darray">2D array genome</a>
+  <li><a href="#genome_2darrayallele">2D array genome with alleles</a>
+  <li><a href="#genome_3darray">3D array genome</a>
+  <li><a href="#genome_3darrayallele">3D array genome with alleles</a>
+  <li><a href="#genome_string">string genome</a>
+  <li><a href="#genome_real">real number genome</a>
+  <li><a href="#genome_list">list genome</a>
+  <li><a href="#genome_tree">tree genome</a>
+       </p>
+       <p>
+  <li><a href="#phenotype_b2d">binary-to-decimal phenotype</a>
+  <li><a href="#alleleset">allele set</a>
+  <li><a href="#evaldata">evaluation data</a>
+       </p>
+       <p>
+       <strong>Data Structures</strong><br>
+  <li><a href="#binstr">binary string</a>
+  <li><a href="#array">array</a>
+  <li><a href="#tree">tree</a>
+  <li><a href="#list">list</a>
+       </p>
+</ul>
+</td></tr>
+</table>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="typedefs">
+<big><strong>Global Typedefs and Enumerations</strong></big></a><br>
+<hr>
+<blockquote>
+<pre>
+typedef float <b>GAProbability, GAProb</b>
+typedef enum  <b>_GABoolean</b> {gaFalse, gaTrue} <b>GABoolean</b>, <b>GABool</b>
+typedef enum  <b>_GAStatus</b> {gaSuccess, gaFailure} <b>GAStatus</b>
+typedef unsigned char <b>GABit</b>
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="signatures">
+<big><strong>Function Prototypes</strong></big></a><br>
+<hr>
+<blockquote>
+<pre>
+GABoolean (*<b>GAGeneticAlgorithm::Terminator</b>)(GAGeneticAlgorithm &amp; ga)
+GAGenome&amp; (*<b>GAIncrementalGA::ReplacementFunction</b>)(GAGenome &amp;, GAPopulation &amp;)
+
+     void (*<b>GAPopulation::Initializer</b>)(GAPopulation &amp;)
+     void (*<b>GAPopulation::Evaluator</b>)(GAPopulation &amp;)
+
+     void (*<b>GAGenome::Initializer</b>)(GAGenome &amp;)
+    float (*<b>GAGenome::Evaluator</b>)(GAGenome &amp;)
+      int (*<b>GAGenome::Mutator</b>)(GAGenome &amp;, float)
+    float (*<b>GAGenome::Comparator</b>)(const GAGenome &amp;, const GAGenome&amp;)
+      int (*<b>GAGenome::SexualCrossover</b>)(const GAGenome&amp;, const GAGenome&amp;, GAGenome*, GAGenome*)
+      int (*<b>GAGenome::AsexualCrossover</b>)(const GAGenome&amp;, GAGenome*)
+
+      int (*<b>GABinaryEncoder</b>)(float&amp; value, GABit* bits,
+       			       unsigned int nbits, float min, float max)
+      int (*<b>GABinaryDecoder</b>)(float&amp; value, const GABit* bits,
+       			       unsigned int nbits, float min, float max)
+</pre>
+</blockquote>
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<a name="defparms">
+<big><strong>Parameter Names and Command-Line Options</strong></big></a><br>
+<hr>
+<blockquote>
+<pre>
+#define name        full name                   short name  default value
+
+gaNminimaxi         minimaxi                    mm          int   gaDefMiniMaxi        = 1
+gaNnGenerations     number_of_generations       ngen        int   gaDefNumGen          = 250
+gaNpConvergence     convergence_percentage      pconv       float gaDefPConv           = 0.99
+gaNnConvergence     generations_to_convergence  nconv       int   gaDefNConv           = 20
+gaNpCrossover       crossover_probability       pcross      float gaDefPCross          = 0.9
+gaNpMutation        mutation_probability        pmut        float gaDefPMut            = 0.01
+gaNpopulationSize   population_size             popsize     int   gaDefPopSize         = 30
+gaNnPopulations     number_of_populations       npop        int   gaDefNPop            = 10
+gaNpReplacement     replacement_percentage      prepl       float gaDefPRepl           = 0.25
+gaNnReplacement     replacement_number          nrepl       int   gaDefNRepl           = 5
+gaNnBestGenomes     number_of_best              nbest       int   gaDefNumBestGenomes  = 1
+gaNscoreFrequency   score_frequency             sfreq       int   gaDefScoreFrequency1 = 1
+gaNflushFrequency   flush_frequency             ffreq       int   gaDefFlushFrequency  = 0
+gaNscoreFilename    score_filename              sfile       char* gaDefScoreFilename   = "generations.dat"
+gaNselectScores     select_scores               sscores     int   gaDefSelectScores    = GAStatistics::Maximum
+gaNelitism          elitism                     el          GABoolean gaDefElitism     = gaTrue
+gaNnOffspring       number_of_offspring         noffspr     int   gaDefNumOff          = 2
+gaNrecordDiversity  record_diversity            recdiv      GABoolean gaDefDivFlag     = gaFalse
+gaNpMigration       migration_percentage        pmig        float gaDefPMig            = 0.1
+gaNnMigration       migration_number            nmig        int   gaDefNMig            = 5
+</pre>
+<p>
+Parameters may be specified using the full name strings (for example in parameter files), short name strings (for example on the command line), or explicit member functions (such as those of the genetic algorithm objects).  All of the #defined names are simply the full names declared as #defined strings; you can use either the string (e.g. number_of_generations) or the #defined name (e.g. gaNnGenerations), but if you use the #defined name then the compiler will be able to catch your spelling mistakes.
+</p>
+<p>
+When you specify GAlib arguments on the command line, they must be in name-value pairs.  You can use either the long or short name.  For example, if my program is called <i>optimizer</i>, the command line for running the program with a population size of 150, mutation rate of 10%, and score filename of evolve.txt would be:
+<pre>
+optimizer popsize 150 pmut 0.1 sfile evolve.txt
+</pre>
+</p>
+</blockquote>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="constants">
+<big><strong>Global Variables and Global Constants</strong></big></a><br>
+<hr>
+<blockquote>
+<pre>
+char* gaErrMsg;    // globally defined pointer to current error message
+</pre>
+<pre>
+int  gaDefScoreFrequency1 = 1;   // for non-overlapping populations
+int  gaDefScoreFrequency2 = 100; // for overlapping populations
+
+float gaDefLinearScalingMultiplier   = 1.2;
+float gaDefSigmaTruncationMultiplier = 2.0;
+float gaDefPowerScalingFactor        = 1.0005;
+float gaDefSharingCutoff             = 1.0;
+</pre>
+</blockquote>
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="random">
+<big><strong>Random Number Functions</strong></big></a><br>
+<hr>
+<blockquote>
+GAlib includes the following functions for generating random numbers:
+<pre>
+     void <b>GARandomSeed</b>(unsigned s = <i>0</i>)
+
+      int <b>GARandomInt</b>()
+      int <b>GARandomInt</b>(int low, int high)
+
+   double <b>GARandomDouble</b>()
+   double <b>GARandomDouble</b>(double low, double high)
+
+    float <b>GARandomFloat</b>()
+    float <b>GARandomFloat</b>(float low, float high)
+
+      int <b>GARandomBit</b>()
+
+GABoolean <b>GAFlipCoin</b>(float p)
+
+      int <b>GAGaussianInt</b>(int stddev)
+    float <b>GAGaussianFloat</b>(float stddev)
+   double <b>GAGaussianDouble</b>(double stddev)
+
+   double <b>GAUnitGaussian</b>()
+</pre>
+<p>
+If you call it with no argument, the GARandomSeed function uses the current time multiplied by the process ID (on systems that have PIDs) as the seed for a psuedo-random number generator.  On systems with no process IDs it uses only the time.  You can specify your own random seed if you like by passing a value to this function.  Once a seed has been specified, subsequent calls to GARandomSeed with the same value have no effect.  Subsequent calls to GARandomSeed with a different value will re-initialize the random number generator using the new value.
+</p>
+<p>
+The functions that take low and high as argument return a random number from low to high, <i>inclusive</i>.  The functions that take no arguments return a value in the interval [0,1].  GAFlipCoin returns a boolean value based on a biased coin toss.  If you give it a value of 1 it will return a 1, if you give it a value of 0.75 it will return a 1 with a 75% chance. 
+</p>
+<p>
+The GARandomBit function is the most efficient way to do unbiased coin tosses.  It uses the random bit generator described in <a href="http://nr.harvard.edu/nr/bookc.html">Numerical Recipes in C</a>.
+</p>
+<p>
+The Gaussian functions return a random number from a Gaussian distribution with deviation that you specify.  The GAUnitGaussian function returns a number from a unit Gaussian distribution with mean 0 and deviation of 1.
+</p>
+<p>
+GAlib uses a single random number generator for the entire library.  You may not change the random number generator on the fly - it can be changed only when GAlib is compiled.  See the config.h and random.h header files for details.  By default, GAlib uses the <i>ran2</i> generator described in <a href="http://nr.harvard.edu/nr/bookc.html">Numerical Recipes in C</a>.
+</p>
+</blockquote>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="errors">
+<big><strong>Error Handling</strong></big></a><br>
+<hr>
+<blockquote>
+Exceptions are not used in GAlib version 2.x.  However, some GAlib functions return a status value to indicate whether or not their operation was successful.  If a function returns an error status, it posts its error message on the global GAlib error pointer, a global string called gaErrMsg.
+<p>
+By default, GAlib error messages are sent immediately to the error stream.  You can disable the immediate printing of error messages by passing gaFalse to the ::GAReportErrors function.  Passing a value of gaTrue enables the behavior.
+</p>
+<p>
+If you would like to redirect the error messages to a different stream, use the ::GASetErrorStream function to assign a new stream.  The default stream is the system standard error stream, cerr.
+</p>
+<p>
+Here are the error control functions and variables:
+</p>
+<pre>
+extern char gaErrMsg[];
+void <b>GAReportErrors</b>(GABoolean flag);
+void <b>GASetErrorStream</b>(ostream&amp;);
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="ga_base">
+<big><strong>GAGeneticAlgorithm</strong></big></a><br>
+<hr>
+<blockquote>
+This is an abstract class that cannot be instantiated.  Each genetic algorithm, when instantiated, will have default operators defined for it.  See the documentation for the specific genetic algorithm type for details.
+<p>
+The base genetic algorithm class keeps track of evolution statistics such as number of mutations, number of crossovers, number of evaluations, best/mean/worst in each generation, and initial/current population statistics.  It also defines the terminator, a member function that specifies the stopping criterion for the algorithm.
+</p>
+<p>
+You can maximize or minimize by calling the appropriate member function.  If you derive your own genetic algorithm, remember that users of your algorithm may need either type of optimization.
+</p>
+<p>
+Statistics can be written to file each generation or periodically by specifying a flush frequency.  Generational scores can be recorded each generation or less frequently by specifying a score frequency.
+</p>
+<p>
+Parameters such as generations-to-completion, crossover probability and mutation probability can be set by member functions, command-line, or from file.
+</p>
+<p>
+The <b>evolve</b> member function first calls <b>initialize</b> then calls the <b>step</b> member function until the <b>done</b> member function returns gaTrue.  It calls the <b>flushScores</b> member as needed when the evolution is complete.  If you evolve the genetic algorithm without using the <b>evolve</b> member function, be sure to call <b>initialize</b> before stepping through the evolution.  You can use the <b>step</b> member function to evolve a single generation.  You should call <b>flushScores</b> when the evolution is finished so that any buffered scores are flushed.
+</p>
+<p>
+The names of the individual parameter member functions correspond to the #defined string names.  You may set the parameters on a genetic algorithm one at a time (for example, using the <b>nGenerations</b> member function), using a parameter list (for example, using the <b>parameters</b> member function with a GAParameterList), by parsing the command line (for example, using the <b>parameters</b> member function with <i>argc</i> and <i>argv</i>), by name-value pairs (for example, using the <b>set</b> member function with a parameter name and value), or by reading a stream or file (for example, using the <b>parameters</b> member with a filename or stream).
+</p>
+
+<i>see also: <a href="#ga_parameters">GAParameterList</a></i><br>
+<i>see also: <a href="#ga_statistics">GAStatistics</a></i><br>
+<i>see also: <a href="#ga_completion">Terminators</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GAGeneticAlgorithm : public GAID
+</pre>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+GABoolean (*<b>GAGeneticAlgorithm::Terminator</b>)(GAGeneticAlgorithm &amp;)
+     enum { <b>MINIMIZE</b> = -1, <b>MAXIMIZE</b> = 1 };
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+static GAParameterList&amp; <b>registerDefaultParameters</b>(GAParameterList&amp;);
+
+                   void * <b>userData</b>()
+                   void * <b>userData</b>(void *)
+
+                     void <b>initialize</b>(unsigned int seed=0)
+                     void <b>evolve</b>(unsigned int seed=0)
+                     void <b>step</b>()
+                GABoolean <b>done</b>()
+
+GAGeneticAlgorithm::Terminator <b>terminator</b>()
+GAGeneticAlgorithm::Terminator <b>terminator</b>(GAGeneticAlgorithm::Terminator)
+
+     const GAStatistics &amp; <b>statistics</b>() const
+                    float <b>convergence</b>() const
+                      int <b>generation</b>() const
+                     void <b>flushScores</b>()
+
+                      int <b>minimaxi</b>() const
+                      int <b>minimaxi</b>(int)
+                      int <b>minimize</b>()
+                      int <b>maximize</b>()
+                      int <b>nGenerations</b>() const
+                      int <b>nGenerations</b>(unsigned int)
+                      int <b>nConvergence</b>() const
+                      int <b>nConvergence</b>(unsigned int)
+                    float <b>pConvergence</b>() const
+                    float <b>pConvergence</b>(float)
+                    float <b>pMutation</b>() const
+                    float <b>pMutation</b>(float)
+                    float <b>pCrossover</b>() const
+                    float <b>pCrossover</b>(float)
+
+        GAGenome::SexualCrossover <b>crossover</b>(GAGenome::SexualCrossover func);
+        GAGenome::SexualCrossover <b>sexual</b>() const;
+       GAGenome::AsexualCrossover <b>crossover</b>(GAGenome::AsexualCrossover func);
+       GAGenome::AsexualCrossover <b>asexual</b>() const;
+
+   const GAPopulation &amp; <b>population</b>() const
+   const GAPopulation &amp; <b>population</b>(const GAPopulation&amp;)
+                    int <b>populationSize</b>() const
+                    int <b>populationSize</b>(unsigned int n)
+                    int <b>nBestGenomes</b>() const 
+                    int <b>nBestGenomes</b>(unsigned int n)
+
+      GAScalingScheme &amp; <b>scaling</b>() const
+      GAScalingScheme &amp; <b>scaling</b>(const GAScalingScheme&amp;)
+    GASelectionScheme &amp; <b>selector</b>() const
+    GASelectionScheme &amp; <b>selector</b>(const GASelectionScheme&amp; s)
+
+                   void <b>objectiveFunction</b>(GAGenome::Evaluator)
+                   void <b>objectiveData</b>(const GAEvalData&amp;)
+
+                      int <b>scoreFrequency</b>() const
+                      int <b>scoreFrequency</b>(unsigned int frequency)
+                      int <b>flushFrequency</b>() const 
+                      int <b>flushFrequency</b>(unsigned int frequency)
+                    char* <b>scoreFilename</b>() const
+                    char* <b>scoreFilename</b>(const char *filename)
+                      int <b>selectScores</b>() const
+                      int <b>selectScores</b>(GAStatistics::ScoreID which)
+                GABoolean <b>recordDiversity</b>() const
+                GABoolean <b>recordDiversity</b>(GABoolean flag)
+
+  const GAParameterList &amp; <b>parameters</b>()
+  const GAParameterList &amp; <b>parameters</b>(const GAParameterList &amp;)
+  const GAParameterList &amp; <b>parameters</b>(int&amp; argc, char** argv, GABoolean flag = <i>gaFalse</i>)
+  const GAParameterList &amp; <b>parameters</b>(const char* filename, GABoolean flag = <i>gaFalse</i>);
+  const GAParameterList &amp; <b>parameters</b>(istream&amp;, GABoolean flag = <i>gaFalse</i>);
+
+                      int <b>set</b>(const char* s, int v)
+                      int <b>set</b>(const char* s, unsigned int v)
+                      int <b>set</b>(const char* s, char v)
+                      int <b>set</b>(const char* s, const char* v)
+                      int <b>set</b>(const char* s, const void* v)
+                      int <b>set</b>(const char* s, double v);
+
+                      int <b>write</b>(const char* filename)
+                      int <b>write</b>(ostream&amp;)
+                      int <b>read</b>(const char* filename)
+                      int <b>read</b>(ostream&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>convergence</b>
+<dd>Returns the current convergence.  The convergence is defined as the ratio of the Nth previous best-of-generation score to the current best-of-generation score.
+
+<dt><b>crossover</b>
+<dd>Specify the mating method to use for evolution.  This can be changed during the course of an evolution.  This genetic algorithm uses only sexual crossover.
+
+<dt><b>done</b>
+<dd>Returns gaTrue if the termination criteria have been met, returns gaFalse otherwise.  This function simply calls the completion function that was specified using the <b>terminator</b> member function.
+
+<dt><b>evolve</b>
+<dd>Initialize the genetic algorithm then evolve it until the termination criteria have been satisfied.  This function first calls <b>initialize</b> then calls the <b>step</b> member function until the <b>done</b> member function returns gaTrue.  It calls the <b>flushScores</b> member as needed when the evolution is complete.  You may pass a seed to evolve if you want to specify your own random seed.
+
+<dt><b>flushFrequency</b>
+<dd>Use this member function to specify how often the scores should be flushed to disk.  A value of 0 means do not write to disk.  A value of 100 means to flush the scores every 100 generations.
+
+<dt><b>flushScores</b>
+<dd>Force the genetic algorithm to flush its generational data to disk.  If you have specified a flushFrequency of 0 or specified a scoreFilename of nil then calling this function has no effect.
+
+<dt><b>generation</b>
+<dd>Returns the current generation.
+
+<dt><b>initialize</b>
+<dd>Initialize the genetic algorithm.  If you specify a seed, this function calls GARandomSeed with that value.  If you do not specify a seed, GAlib will choose one for you as described in the <a href="#random">random functions</a> section.  It then initializes the population and does the first population evaluation.
+
+<dt><b>nBestGenomes</b>
+<dd>Specify how many 'best' genomes to record.  For example, if you specify 10, the genetic algorithm will keep the 10 best genomes that it ever encounters.  Beware that if you specify a large number here the algorithm will slow down because it must compare the best of each generation with its current list of best individuals.  The default is 1.
+
+<dt><b>nConvergence</b>
+<dd>Set/Get the number of generations used for the convergence test.
+
+<dt><b>nGenerations</b>
+<dd>Set/Get the number of generations.
+
+<dt><b>objectiveData</b>
+<dd>Set the objective data member on all individuals used by the genetic algorithm.  This can be changed during the course of an evolution.
+
+<dt><b>objectiveFunction</b>
+<dd>Set the objective function on all individuals used by the genetic algorithm.  This can be changed during the course of an evolution.
+
+<dt><b>parameters</b>
+<dd>Returns a reference to a parameter list containing the current values of the genetic algorithm parameters.
+
+<dt><b>parameters</b>(GAParameterList&amp;)
+<dd>Set the parameters for the genetic algorithm.  To use this member function you must create a parameter list (an array of name-value pairs) then pass it to the genetic algorithm.  
+
+<dt><b>parameters</b>(int&amp; argc, char** argv, GABoolean flag = <i>gaFalse</i>)
+<dd>Set the parameters for the genetic algorithm.  Use this member function to let the genetic algorithm parse your command line for arguments that GAlib understands.  This method decrements argc and moves the pointers in argv appropriately to remove from the list the arguments that it understands.  If you pass gaTrue as the third argument then the method will complain about any command-line arguments that are not recognized by this genetic algorithm.
+
+<dt><b>parameters</b>(char* filename, GABoolean flag = <i>gaFalse</i>)
+<dt><b>parameters</b>(istream&amp;, GABoolean flag = <i>gaFalse</i>)
+<dd>Set the parameters for the genetic algorithm.  This version of the parameters member function will parse the specified file or stream for parameters that the genetic algorithm understands.  If you pass gaTrue as the second argument then the method will complain about any parameters that are not recognized by this genetic algorithm.
+
+<dt><b>pConvergence</b>
+<dd>Set/Get the convergence percentage.  The convergence is defined as the ratio of the <i>N</i>th previous best-of-generation score to the current best-of-generation score.  <i>N</i> is defined by the <b>nConvergence</b> member function.
+
+<dt><b>pCrossover</b>
+<dd>Set/Get the crossover probability.
+
+<dt><b>pMutation</b>
+<dd>Set/Get the mutation probability.
+
+<dt><b>population</b>
+<dd>Set/Get the population.  Returns a reference to the current population.
+
+<dt><b>populationSize</b>
+<dd>Set/Get the population size.  This can be changed during the course of an evolution.
+
+<dt><b>recordDiversity</b>
+<dd>Convenience function for specifying whether or not to calculate diversity.  Since diversity calculations require comparison of each individual with every other, recording this statistic can be expensive.  The default is gaFalse (diversity is not recorded).
+
+<dt><b>registerDefaultParameters</b>
+<dd>Each genetic algorithm defines this member function to declare the parameters that work with it.  Pass a parameter list to this function and this function will configure the list with the default parameter list and values for the genetic algorithm class from which you called it.  This is a statically defined function, so invoke it using the class name of the genetic algorithm whose parameters you want to use, for example, GASimpleGA::registerDefaultParameters(list).  The default parameters for the base genetic algorithm class are:
+     <ul>
+       <li>flushFrequency
+       <li>minimaxi
+       <li>nBestGenomes
+       <li>nGenerations
+       <li>nConvergence
+       <li>pConvergence
+       <li>pCrossover
+       <li>pMutation
+       <li>populationSize
+       <li>recordDiversity
+       <li>scoreFilename
+       <li>scoreFrequency
+       <li>selectScores
+     </ul>
+
+
+<dt><b>scaling</b>
+<dd>Set/Get the scaling scheme.  The specified scaling scheme must be derived from the <a href="#scaling">GAScalingScheme</a> class.  This can be changed during the course of an evolution.
+
+<dt><b>scoreFilename</b>
+<dd>Specify the name of the file to which the scores should be recorded.
+
+<dt><b>scoreFrequency</b>
+<dd>Specify how often the generational scores should be recorded.  The default depends on the type of genetic algorithm that you are using.  You can record mean, max, min, stddev, and diversity for every n generations.
+
+<dt><b>selector</b>
+<dd>Set/Get the selection scheme for the genetic algorithm.  The selector is used to pick individuals from a population before mating and mutation occur.  This can be changed during the course of an evolution.
+
+<dt><b>selectScores</b>
+<dd>This function is used to specify which scores should be saved to disk.  The argument is the logical OR of the following values:  Mean, Maximum, Minimum, Deviation, Diversity (all defined in the scope of the GAStatistics object).  To record all of the scores, pass GAStatistics::AllScores.  When written to file, the format is as follows:
+<pre>
+generation  TAB  mean  TAB  max  TAB  min  TAB deviation  TAB  diversity NEWLINE
+</pre>
+
+<dt><b>set</b>
+<dd>Set individual parameters for the genetic algorithm.  The first argument should be the full- or short-name of the parameter you wish to set.  The second argument is the value to which you would like to set the parameter.
+
+<dt><b>statistics</b>
+<dd>Returns a reference to the statistics object in the genetic algorithm.  The statistics object maintains information such as best, worst, mean, and standard deviation, and diversity of each generation as well as a separate population with the best individuals ever encountered by the genetic algorithm.
+
+<dt><b>step</b>
+<dd>Evolve the genetic algorithm for one generation.
+
+<dt><b>terminator</b>
+<dd>Set/Get the termination function.  The genetic algorithm is complete when the completion function returns gaTrue.  The function must have the proper <a href="#signatures">signature</a>.
+
+<dt><b>userData</b>
+<dd>Set/Get the userData member of the genetic algorithm.  This member is a generic pointer to any information that needs to be stored with the genetic algorithm.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="ga_non_overlapping">
+<big><strong>GASimpleGA</strong></big> (non-overlapping populations)</a><br>
+<hr>
+<blockquote>
+This genetic algorithm is the 'simple' genetic algorithm that Goldberg describes in his book.   It uses non-overlapping populations.  When you create a simple genetic algorithm, you must specify either an individual or a population of individuals.  The new genetic algorithm will clone the individual(s) that you specify to make its own population.  You can change most of the genetic algorithm behaviors after creation and during the course of the evolution.
+<p>
+The simple genetic algorithm creates an initial population by cloning the individual or population you pass when you create it.  Each generation the algorithm creates an entirely new population of individuals by selecting from the previous population then mating to produce the new offspring for the new population.  This process continues until the stopping criteria are met (determined by the terminator).
+</p>
+<p>
+Elitism is optional.  By default, elitism is on, meaning that the best individual from each generation is carried over to the next generation.  To turn off elitism, pass gaFalse to the <b>elitist</b> member function.
+</p>
+<p>
+The score frequency for this genetic algorithm defaults to 1 (it records the best-of-generation every generation).  The default scaling is Linear, the default selection is RouletteWheel.
+</p>
+
+<i>see also: <a href="#ga_base">GAGeneticAlgorithm</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GASimpleGA : public GAGeneticAlgorithm
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GASimpleGA(const GAGenome&amp;)
+GASimpleGA(const GAPopulation&amp;)
+GASimpleGA(const GASimpleGA&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+static GAParameterList&amp; <b>registerDefaultParameters</b>(GAParameterList&amp;);
+
+           GASimpleGA &amp; <b>operator++</b>()
+
+              GABoolean <b>elitist</b>() const
+              GABoolean <b>elitist</b>(GABoolean flag)
+</pre>
+</blockquote>
+
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+  
+  <dt><b>elitist</b>
+  <dd>Set/Get the elitism flag.  If you specify gaTrue, the genetic algorithm will copy the best individual from the previous population into the current population if no individual in the current population is any better.
+       
+  <dt><b>operator++</b>
+  <dd>The increment operator evolves the genetic algorithm's population by one generation by calling the <b>step</b> member function.
+       
+  <dt><b>registerDefaultParameters</b>
+  <dd>This function adds to the specified list parameters that are of interest to this genetic algorithm.  The default parameters for the simple genetic algorithm are the parameters for the base genetic algorithm class plus the following:
+       <ul>
+	 <li>elitism
+       </ul>
+       
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="ga_overlapping">
+<big><strong>GASteadyStateGA</strong></big> (overlapping populations)</a><br>
+<hr>
+<blockquote>
+This genetic algorithm is similar to the algorithms described by DeJong.  It uses overlapping populations with a user-specifiable amount of overlap.  The algorithm creates a population of individuals by cloning the genome or population that you pass when you create it.  Each generation the algorithm creates a temporary population of individuals, adds these to the previous population, then removes the worst individuals in order to return the population to its original size.
+<p>
+You can select the amount of overlap between generations by specifying the <b>pReplacement</b> parameter.  This is the percentage of the population that should be replaced each generation.  Newly generated offspring are added to the population, then the worst individuals are destroyed (so the new offspring may or may not make it into the population, depending on whether they are better than the worst in the population).
+</p>
+<p>
+If you specify a replacement percentage, then that percentage of the population will be replaced each generation.  Alternatively, you can specify a number of individuals (less than the number in the population) to replace each generation.  You cannot specify both - in a parameter list containing both parameters, the latter is used.
+</p>
+<p>
+The score frequency for this genetic algorithm defaults to 100 (it records the best-of-generation every 100th generation).  The default scaling is Linear, the default selection is RouletteWheel.
+</p>
+
+<i>see also: <a href="#ga_base">GAGeneticAlgorithm</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GASteadyStateGA : public GAGeneticAlgorithm
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GASteadyStateGA(const GAGenome&amp;)
+GASteadyStateGA(const GAPopulation&amp;)
+GASteadyStateGA(const GASteadyStateGA&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+static GAParameterList&amp; <b>registerDefaultParameters</b>(GAParameterList&amp;);
+
+      GASteadyStateGA &amp; <b>operator++</b>()
+
+                  float <b>pReplacement</b>() const
+                  float <b>pReplacement</b>(float percentage)
+                    int <b>nReplacement</b>() const
+                    int <b>nReplacement</b>(unsigned int)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>nReplacement</b>
+  <dd>Specify a number of individuals to replace each generation.  When you specify a number of individuals to replace, the pReplacement value is set to 0.
+       
+  <dt><b>operator++</b>
+  <dd>The increment operator evolves the genetic algorithm's population by one generation by calling the <b>step</b> member function.
+       
+  <dt><b>pReplacement</b>
+  <dd>Specify a percentage of the population to replace each generation.  When you specify a replacement percentage, the nReplacement value is set to 0.
+
+  <dt><b>registerDefaultParameters</b>
+  <dd>This function adds to the specified list parameters that are of interest to this genetic algorithm.  The default parameters for the steady-state genetic algorithm are the parameters for the base genetic algorithm class plus the following:
+       <ul>
+	 <li>pReplacement
+	 <li>nReplacement
+       </ul>
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="ga_incremental">
+<big><strong>GAIncrementalGA</strong></big> (overlapping populations with 1 or 2 children per generation)</a><br>
+<hr>
+<blockquote>
+This genetic algorithm is similar to those based on the GENITOR model.  It uses overlapping populations, but very little overlap (only one or two individuals get replaced each generation).  The default replacement scheme is WORST.  A replacement function is required only if you use CUSTOM or CROWDING as the replacement scheme.  You can do DeJong-style crowding by specifying a distance function with the CROWDING option.  (for best DeJong-style results, derive your own genetic algorithm)
+<p>
+You can specify the number of children that are generated in each 'generation' by using the <b>nOffspring</b> member function.  Since this genetic algorithm is based on a two-parent crossover model, the number of offspring must be either 1 or 2.  The default is 2.
+</p>
+<p>
+Use the <b>replacement</b> method to specify which type of replacement the genetic algorithm should use.  The replacement strategy determines how the new children will be inserted into the population.  If you want the new child to replace one of its parents, use the Parent strategy.  If you want the child to replace a random population member, use the Random strategy.  If you want the child to replace the worst population member, use the Worst strategy.
+</p>
+<p>
+If you specify CUSTOM or CROWDING you must also specify a replacement function with the proper <a href="#signatures">signature</a>.  This function is used to pick which genome will be replaced.  The first argument passed to the replacement function is the individual that is supposed to go into the population.  The second argument is the population into which the individual is supposed to go.  The replacement function should return a reference to the genome that the individual should replace.  If no replacement should take place, the replacement function should return a reference to the individual.
+</p>
+<p>
+The score frequency for this genetic algorithm defaults to 100 (it records the best-of-generation every 100th generation).  The default scaling is Linear, the default selection is RouletteWheel.
+</p>
+
+<i>see also: <a href="#ga_base">GAGeneticAlgorithm</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GAIncrementalGA : public GAGeneticAlgorithm
+</pre>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+GAGenome&amp; (*<b>GAIncrementalGA::ReplacementFunction</b>)(GAGenome &amp;, GAPopulation &amp;)
+
+enum ReplacementScheme {
+    <b>RANDOM</b> = GAPopulation::RANDOM,
+    <b>BEST</b> = GAPopulation::BEST,
+    <b>WORST</b> = GAPopulation::WORST,
+    <b>CUSTOM</b> = -30,
+    <b>CROWDING</b> = -30,
+    <b>PARENT</b> = -10
+    };
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAIncrementalGA(const GAGenome&amp;)
+GAIncrementalGA(const GAPopulation&amp;)
+GAIncrementalGA(const GAIncrementalGA&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+static GAParameterList&amp; <b>registerDefaultParameters</b>(GAParameterList&amp;);
+
+      GASteadyStateGA &amp; <b>operator++</b>()
+
+      ReplacementScheme <b>replacement</b>()
+      ReplacementScheme <b>replacement</b>(ReplacementScheme, ReplacementFunction f = <i>NULL</i>)
+
+                    int <b>nOffspring</b>() const
+                    int <b>nOffspring</b>(unsigned int n)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>nOffspring</b>
+  <dd>The incremental genetic algorithm can produce either one or two individuals each generation.  Use this member function to specify how many individuals you would like.
+       
+  <dt><b>operator++</b>
+  <dd>The increment operator evolves the genetic algorithm's population by one generation by calling the <b>step</b> member function.
+       
+  <dt><b>registerDefaultParameters</b>
+  <dd>This function adds to the specified list parameters that are of interest to this genetic algorithm.  The default parameters for the incremental genetic algorithm are the parameters for the base genetic algorithm class plus the following:
+       <ul>
+	 <li>nOffspring
+       </ul>
+
+  <dt><b>replacement</b>
+  <dd>Specify a replacement method.  The scheme can be one of
+       <ul>
+       <li>GAIncrementalGA::RANDOM
+       <li>GAIncrementalGA::BEST
+       <li>GAIncrementalGA::WORST
+       <li>GAIncrementalGA::CUSTOM
+       <li>GAIncrementalGA::CROWDING
+       <li>GAIncrementalGA::PARENT
+     </ul>
+     If you specify custom or crowding replacement then you must also specify a function.  The replacement function takes two arguments:  the individual to insert and the population into which it will be inserted.  The replacement function should return a reference to the genome that should be replaced.  If no replacement should take place, the replacement function should return a reference to the individual passed to it.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="ga_deme">
+<big><strong>GADemeGA</strong></big> (parallel populations with migration)</a><br>
+<hr>
+<blockquote>
+This genetic algorithm has multiple, independent populations.  It creates the populations by cloning the genome or population that you pass when you create it.
+<p>
+Each population evolves using a steady-state genetic algorithm, but each generation some individuals migrate from one population to another.  The migration algorithm is deterministic stepping-stone; each population migrates a fixed number of its best individuals to its neighbor.  The master population is updated each generation with best individual from each population.
+</p>
+<p>
+If you want to experiment with other migration methods, derive a new class from this one and define a new migration operator.  You can change the evolution behavior by defining a new <b>step</b> method in a derived class.
+</p>
+
+<i>see also: <a href="#ga_base">GAGeneticAlgorithm</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GADemeGA : public GAGeneticAlgorithm
+</pre>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+enum { <b>ALL</b>= -1 };
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GADemeGA(const GAGenome&amp;)
+GADemeGA(const GAPopulation&amp;)
+GADemeGA(const GADemeGA&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+static GAParameterList&amp; <b>registerDefaultParameters</b>(GAParameterList&amp;);
+
+               void <b>migrate</b>()
+         GADemeGA &amp; <b>operator++</b>()
+
+const GAPopulation&amp; <b>population</b>(unsigned int i) const
+const GAPopulation&amp; <b>population</b>(int i, const GAPopulation&amp;)
+                int <b>populationSize</b>(unsigned int i) const
+                int <b>populationSize</b>(int i, unsigned int n)
+                int <b>nReplacement</b>(unsigned int i) const
+                int <b>nReplacement</b>(int i, unsigned int n)
+                int <b>nMigration</b>() const
+                int <b>nMigration</b>(unsigned int i)
+                int <b>nPopulations</b>() const
+                int <b>nPopulations</b>(unsigned int i)
+const GAStatistics&amp; <b>statistics</b>() const
+const GAStatistics&amp; <b>statistics</b>(unsigned int i) const
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+  <dt><b>nMigration</b>
+  <dd>Specify the number of individuals to migrate each generation.  Each population will migrate this many of its best individuals to the next population (the stepping-stone migration model).  The individuals replace the worst individuals in the receiving population.
+
+  <dt><b>nReplacement</b>
+  <dd>Specify a number of individuals to replace each generation.  When you specify a number of individuals to replace, the pReplacement value is set to 0.  The first argument specifies which population should be modified.  Use GADemeGA::ALL to apply to all populations.
+      
+  <dt><b>operator++</b>
+  <dd>The increment operator evolves the genetic algorithm's population by one generation by calling the <b>step</b> member function.
+       
+  <dt><b>pReplacement</b>
+  <dd>Specify a percentage of the population to replace each generation.  When you specify a replacement percentage, the nReplacement value is set to 0.  The first argument specifies which population should be modified.  Use GADemeGA::ALL to apply to all populations.
+
+  <dt><b>registerDefaultParameters</b>
+  <dd>This function adds parameters to the specified list that are of interest to this genetic algorithm.  The default parameters for the deme genetic algorithm are the parameters for the base genetic algorithm class plus the following:
+       <ul>
+	 <li>nMigration
+	 <li>nPopulations
+       </ul>
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="completion">
+<big><strong>Terminators</strong></big></a><br>
+<hr>
+<blockquote>
+Completion functions are used to determine whether or not a genetic algorithm is finished.  The <b>done</b> member function simply calls the completion function to determine whether or not the genetic algorithm should continue.  The predefined completion functions use generation and convergence to determine whether or not the genetic algorithm is finished.
+<p>
+The completion function returns gaTrue when the genetic algorithm should finish, and gaFalse when the genetic algorithm should continue.
+</p>
+<p>
+In this context, convergence refers to the the similarity of the objective scores, <i>not</i> similarity of underlying genetic structure.  The built-in convergence measures use the best-of-generation scores to determine whether or not the genetic algorithm has plateaued. 
+</p>
+<pre>
+GABoolean <b>GAGeneticAlgorithm::TerminateUponGeneration</b>(GAGeneticAlgorithm &amp;)
+GABoolean <b>GAGeneticAlgorithm::TerminateUponConvergence</b>(GAGeneticAlgorithm &amp;)
+GABoolean <b>GAGeneticAlgorithm::TerminateUponPopConvergence</b>(GAGeneticAlgorithm &amp;)
+</pre>
+<dl>
+  <p>
+  <dt><b>TerminateUponGeneration</b>
+  <dd>This function compares the current generation to the specified number of generations.  If the current generation is less than the requested number of generations, it returns gaFalse.  Otherwise, it returns gaTrue.
+       </p>
+       <p>
+  <dt><b>TerminateUponConvergence</b>
+  <dd>This function compares the current convergence to the specified convergence value.  If the current convergence is less than the requested convergence, it returns gaFalse.  Otherwise, it returns gaTrue. 
+       </p>
+       <p>
+       Convergence is a number between 0 and 1.  A convergence of 1 means that the nth previous best-of-generation is equal to the current best-of-generation.  When you use convergence as a stopping criterion you <i>must</i> specify the convergence percentage and you <i>may</i> specify the number of previous generations against which to compare.  The genetic algorithm will always run at least this many generations.
+       </p>
+       <p>
+  <dt><b>TerminateUponPopConvergence</b>
+  <dd>This function compares the population average to the score of the best individual in the population.  If the population average is within <i>pConvergence</i> of the best individual's score, it returns gaTrue.  Otherwise, it returns gaFalse.
+       </p>
+       
+</dl>
+<p>
+For details about how to write your own termination function, see the <a href="Extensions.html">customizations</a> page.
+</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="replacement">
+<big><strong>Replacement Schemes</strong></big></a><br>
+<hr>
+<blockquote>
+The replacement scheme is used by the incremental genetic algorithm to determine how a new individual should be inserted into a population.  Valid replacement schemes include:
+<blockquote>
+<pre>
+GAIncrementalGA::RANDOM
+GAIncrementalGA::BEST
+GAIncrementalGA::WORST
+GAIncrementalGA::CUSTOM
+GAIncrementalGA::CROWDING
+GAIncrementalGA::PARENT
+</pre>
+</blockquote>
+<p>
+In general, replace worst produces the best results.  Replace parent is useful for basic speciation, and custom replacement can be used when you want to do your own type of speciation.
+</p>
+<p>
+If you specify CUSTOM or CROWDING replacement then you must also specify a replacement function.  The replacement function takes as arguments an individual and the population into which the individual should be placed.  It returns a reference to the genome that the individual should replace.  If the individual should not be inserted into the population, the function should return a reference to the individual.
+</p>
+<p>
+Any replacement function must have the following function prototype:
+<pre>
+typedef GAGenome&amp; (*<b>GAIncrementalGA::ReplacementFunction</b>)(GAGenome &amp;, GAPopulation &amp;);
+</pre>
+The first argument is the genome that will be inserted into the population, the second argument is the population into which the genome should be inserted.  The function should return a reference to the genome that will be replaced.  If no replacement occurs, the function should return a reference to the original genome.
+</p>
+<p>
+For details about how to write your own replacement function, see the <a href="Extensions.html">customizations</a> page.
+</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="evaldata">
+<big><strong>GAEvalData</strong></big></a><br>
+<hr>
+<blockquote>
+The evaluation data object is a generic base class for genome- and/or population-specific data.  Whereas the userData member of the genome is shared by all genomes in a population, the evalData member is unique to each genome.  The base class defines the copy/clone interface for the evaluation data object.  Your derived classes should use this mechanism.  Any derived class <i>must</i> define a <b>clone</b> and <b>copy</b> member function.  These will be called by the base class when the evaluation data is cloned/copied by the genomes/populations.
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GAEvalData : public GAID
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAEvalData()
+GAEvalData(const GAEvalData&amp;) 
+</pre>
+</blockquote>
+
+<big><strong>member functions</strong></big><br>
+<blockquote>
+<pre>
+GAEvalData* <b>clone</b>() const
+       void <b>copy</b>(const GAEvalData&amp;)
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_base">
+<big><strong>GAGenome</strong></big></a><br>
+<hr>
+<blockquote>
+The genome is a virtual base class and cannot be instantiated.  It defines a number of constants and function prototypes specific to the genome and its derived classes.
+<p>
+The dimension is used to specify which dimension is being referred to in multi-dimensional genomes.  The <b>clone</b> method specifies whether to clone the entire genome (a new genome with contents identical to the original will be created) or just the attributes of the genome (a new genome with identical characteristics will be created).  In both cases the caller is responsible for deleting the memory allocated by the <b>clone</b> member function.  The resize constants are used when specifying a resizable genome's resize behavior.
+</p>
+<p>
+The genetic operators for genomes are functions that take generic genomes as their arguments.  This makes it possible to define new behaviors for existing genome classes without deriving a new class.  The genetic operators are defined with the following prototypes:
+</p>
+<p>
+Instructions for deriving your own genome class are in the <a href="Extensions.html">customization</a> page.
+</p>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GAGenome : public GAID
+</pre>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+enum GAGenome::Dimension { <b>LENGTH</b>, <b>WIDTH</b>, <b>HEIGHT</b>, <b>DEPTH</b> }
+enum GAGenome::CloneMethod { <b>CONTENTS</b>, <b>ATTRIBUTES</b> }
+enum { <b>FIXED_SIZE</b> = -1, <b>ANY_SIZE</b> = -10 }
+</pre>
+<pre>
+    float (*<b>GAGenome::Evaluator</b>)(GAGenome &amp;)
+     void (*<b>GAGenome::Initializer</b>)(GAGenome &amp;)
+      int (*<b>GAGenome::Mutator</b>)(GAGenome &amp;, float)
+    float (*<b>GAGenome::Comparator</b>)(const GAGenome &amp;, const GAGenome&amp;)
+      int (*<b>GAGenome::SexualCrossover</b>)(const GAGenome&amp;, const GAGenome&amp;, GAGenome*, GAGenome*);
+      int (*<b>GAGenome::AsexualCrossover</b>)(const GAGenome&amp;, GAGenome*);
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+              virtual void <b>copy</b>(const GAGenome &amp; c)
+        virtual GAGenome * <b>clone</b>(CloneMethod flag = <i>CONTENTS</i>)
+
+                     float <b>score</b>(GABoolean flag = <i>gaFalse</i>)
+                     float <b>score</b>(float s)
+                       int <b>nevals</b>()
+
+                     float <b>evaluate</b>(GABoolean flag = <i>gaFalse</i>)
+       GAGenome::Evaluator <b>evaluator</b>() const
+       GAGenome::Evaluator <b>evaluator</b>(GAGenome::Evaluator func)
+
+                      void <b>initialize</b>()
+       GAGenomeInitializer <b>initializer</b>() const
+       GAGenomeInitializer <b>initializer</b>(GAGenome::Initializer func)
+
+                       int <b>mutate</b>(float pmutation)
+         GAGenome::Mutator <b>mutator</b>() const
+         GAGenome::Mutator <b>mutator</b>(GAGenome::Mutator func)
+
+                     float <b>compare</b>(const GAGenome&amp; g) const
+      GAGenome::Comparator <b>comparator</b>() const 
+      GAGenome::Comparator <b>comparator</b>(GAGenome::Comparator c)
+
+ GAGenome::SexualCrossover <b>crossover</b>(GAGenome::SexualCrossover func)
+ GAGenome::SexualCrossover <b>sexual</b>()
+GAGenome::AsexualCrossover <b>crossover</b>(GAGenome::AsexualCrossover func)
+GAGenome::AsexualCrossover <b>asexual</b>()
+
+      GAGeneticAlgorithm * <b>geneticAlgorithm</b>() const
+      GAGeneticAlgorithm * <b>geneticAlgorithm</b>(GAGeneticAlgorithm &amp;)
+                    void * <b>userData</b>() const
+                    void * <b>userData</b>(void * data)
+              GAEvalData * <b>evalData</b>() const
+              GAEvalData * <b>evalData</b>(void * data)
+
+               virtual int <b>read</b>(istream &amp;)
+               virtual int <b>write</b>(ostream &amp;) const
+
+               virtual int <b>equal</b>(const GAGenome &amp;) const
+               virtual int <b>notequal</b>(const GAGenome &amp;) const
+</pre>
+These operators call the corresponding virtual members so that they will work on <i>any</i> properly derived genome class.
+<pre>
+              friend int <b>operator==</b>(const GAGenome&amp;, const GAGenome&amp;)
+              friend int <b>operator!=</b>(const GAGenome&amp;, const GAGenome&amp;)
+        friend ostream &amp; <b>operator&lt;&lt;</b>(ostream&amp;, const GAGenome&amp;)
+        friend istream &amp; <b>operator&gt;&gt;</b>(istream&amp;, GAGenome&amp;)
+</pre>
+</blockquote>
+
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>clone</b>
+<dd>This method allocates space for a new genome whereas the copy method uses the space of the genome to which it belongs.  
+
+<dt><b>compare</b>
+<dd>Compare two genomes.  The comparison can be genotype- or phenotype-based.  The comparison returns a value greater than or equal to 0.  0 means the two genomes are identical (no diversity).  The exact meaning of the comparison is up to you.
+
+<dt><b>comparator</b>
+<dd>Set/Get the comparison method.  The comparator must have the correct <a href="#signatures">signature</a>.
+
+<dt><b>copy</b>
+<dd>The copy member function is called by the base class' operator= and clone members.  You can use it to copy the contents of a genome into an existing genome.
+
+<dt><b>crossover</b>
+<dd>Each genome class can define its preferred mating method.  Use this method to assign the preferred crossover for a genome instance.
+
+<dt><b>equal</b>
+<dt><b>notequal</b>
+<dd>'equal' and 'notequal' are genome-specific.  See the documentation for each genome class for specific details about what 'equal' means.  For example, genomes that have identical contents but different allele sets may or may not be considered equal.  By default, <b>notequal</b> just calls the <b>equal</b> function, but you can override this in derived classes if you need to optimize the comparison.
+
+<dt><b>evalData</b>
+<dd>Set/Get the object used to store genome-specific evaluation data.  Each genome owns its own evaluation data object; cloning a genome clones the evaluation data as well.
+
+<dt><b>evaluate</b>
+<dd>Invoke the genome's evaluation function.  If you call this member with gaTrue, the evaluation function is called no matter what (assuming one has been assigned to the genome).  By default, the argument to this function is gaFalse, so the genome's evaluation function is called only if the state of the genome has not changed since the last time the evaluator was invoked.
+
+<dt><b>evaluator</b>
+<dd>Set/Get the function used to evaluate the genome.
+
+<dt><b>geneticAlgorithm</b>
+<dd>The member function returns a pointer to the genetic algorithm that 'owns' the genome.  If this function returns nil then the genome has no genetic algorithm owner.
+
+<dt><b>initialize</b>
+<dd>Calls the initialization function for the genome.
+
+<dt><b>initializer</b>
+<dd>Set/Get the initialization method.  The initializer must have the correct <a href="#signatures">signature</a>.
+
+<dt><b>mutate</b>
+<dd>Calls the mutation method for the genome.  The value is typically the mutation likliehood, but the exact interpretation of this value is up to the designer of the mutation method.
+
+<dt><b>mutator</b>
+<dd>Set/Get the mutation method.  The mutator must have the correct <a href="#signatures">signature</a>.
+
+<dt><b>nevals</b>
+<dd>Returns the number of objective function evaluations since the genome was initialized.
+
+<dt><b>operator==</b>
+<dt><b>operator!=</b>
+<dt><b>operator&lt;&lt;</b>
+<dt><b>operator&gt;&gt;</b>
+<dd>These methods call the associated virtual member functions.  They can be used on any generic genome.  If the derived class was properly defined, the appropriate derived functions will be called and the functions will operate on the derived classes rather than the base class.
+
+<dt><b>read</b>
+<dd>Fill the genome with the data read from the specified stream.
+
+<dt><b>sexual</b>
+<dt><b>asexual</b>
+<dd>Returns a pointer to the preferred mating method for this genome.  If this function returns nil, no mating method has been defined for the genome.  The <a href="#ga_base">genetic algorithm</a> object has ultimate control over the mating method that is actually used in the evolution.
+
+<dt><b>score</b>
+<dd>Returns the objective score of the genome using the objective function assigned to the genome.  If no objective function has been assigned and no score has been set, a score of 0 will be returned.  If the <b>score</b> function is called with an argument, the genome's objective score is set to that value (useful for population-based objective functions in which the population object does the evaluations).
+
+<dt><b>userData</b>
+<dd>Each genome contains a generic pointer to user-specifiable data.  Use this member function to set/get that pointer.  Notice that cloning a genome will cause the cloned genome to refer to the <i>same</i> user data pointer as the original; the user data is not cloned as well.  So all genomes in a population refer to the same user data.
+
+<dt><b>write</b>
+<dd>Send the contents of the genome to the specified stream.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_list">
+<big><strong>GAListGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The list genome is a template class.  It is derived from the GAGenome class as well as the GAList&lt;&gt; class.  It can be used for order-based representations or variable length sequences as well as traditional applications of lists.
+<p>
+You <i>must</i> define an initialization operator for this class.  The default initializer is NoInitializer - if you do not assign an initialization operator then you'll get errors about no initializer defined when you try to initialize the genome. 
+</p> 
+
+<i>see also: <a href="#list">GAList</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GAListGenome&lt;T&gt; : public GAList&lt;T&gt;, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAListGenome(GAGenome::Evaluator objective = <i>NULL</i>, void * userData = <i>NULL</i>)
+GAListGenome(const GAListGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GAListGenome&lt;&gt;::DestructiveMutator
+GAListGenome&lt;&gt;::SwapMutator
+GAListGenome&lt;&gt;::OnePointCrossover
+GAListGenome&lt;&gt;::PartialMatchCrossover
+GAListGenome&lt;&gt;::OrderCrossover
+GAListGenome&lt;&gt;::CycleCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAGenome::NoInitializer
+    comparison:  GAGenome::NoComparator
+      mutation:  GAListGenome&lt;&gt;::SwapMutator
+     crossover:  GAListGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_tree">
+<big><strong>GATreeGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The tree genome is a template class.  It is derived from the GAGenome class as well as the GATree&lt;&gt; class.  The tree genome can be used for direct manipulation of tree objects.  It can be used to represent binary trees as well as non-binary trees.
+<p>
+You <i>must</i> define an initialization operator for this class.  The default initializer is NoInitializer - if you do not assign an initialization operator then you'll get errors about no initializer defined when you try to initialize the genome.  
+</p>  
+
+<i>see also: <a href="#tree">GATree</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GATreeGenome&lt;T&gt; : public GATree&lt;T&gt;, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GATreeGenome(GAGenome::Evaluator objective = <i>NULL</i>, void * userData = <i>NULL</i>)
+GATreeGenome(const GATreeGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GATreeGenome&lt;&gt;::DestructiveMutator
+GATreeGenome&lt;&gt;::SwapSubtreeMutator
+GATreeGenome&lt;&gt;::SwapNodeMutator
+GATreeGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAGenome::NoInitializer
+    comparison:  GAGenome::NoComparator
+      mutation:  GATreeGenome&lt;&gt;::SwapSubtreeMutator
+     crossover:  GATreeGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br>
+<a name="genome_string">
+<strong>GAStringGenome</strong></a><br>
+<hr>
+<blockquote>
+The string genome can be used for order-based applications, variable length string applications, or non-binary allele set alphabets.  The allele set defines the possible values that each element in the string may assume.
+<p>
+The string genome is a specialization of the <a href="#genome_1darrayallele">array genome with alleles</a>.  The specialization is of type <code>char</code>.  You must create an allele set or array of allele sets before you can instantiate this genome.
+</p> 
+<p>
+If you create a string genome using a single allele set, each element in the genome will use that allele set to determine its value.  If you create a string genome using an allele set array, the string will have a length equal to the number of elements in the array and each element of the string will be governed by the allele set corresponding to its location in the string.
+</p>
+<p>
+To use the string genome in your code, you must include the string genome header file in each of your files that uses the string genome.  You must also include the string genome source file (it contains template specialization code) in <i>one</i> (and only one) of your source files.  Including the string genome source file will force the compiler to use the string specializations.  If you do not include the string genome source file you will get the generic array routines instead (and some of the allele methods will not work as expected).
+</p>
+
+<i>see also: <a href="#genome_1darrayallele">GA1DArrayAlleleGenome</a></i><br>
+<i>see also: <a href="#alleleset">GAAlleleSet</a></i><br>
+<i>see also: <a href="#allelesetarray">GAAlleleSetArray</a></i>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+typedef GAAlleleSet&lt;char&gt;                    GAStringAlleleSet
+typedef GAAlleleSetCore&lt;char&gt;                GAStringAlleleSetCore
+typedef GAAlleleSetArray&lt;char&gt;               GAStringAlleleSetArray
+typedef GA1DArrayAlleleGenome&lt;char&gt;          GAStringGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAStringGenome(unsigned int length,
+               const GAStringAlleleSet &amp;,
+               GAGenome::Evaluator objective = <i>NULL</i>,
+               void * userData = <i>NULL</i>)
+GAStringGenome(const GAStringAlleleSetArray &amp;,
+               GAGenome::Evaluator objective = <i>NULL</i>,
+               void * userData = <i>NULL</i>)
+GAStringGenome(const GAStringGenome&amp;)
+</pre>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GAStringGenome::UniformInitializer
+GAStringGenome::OrderedInitializer
+GAStringGenome::FlipMutator
+GAStringGenome::SwapMutator
+GAStringGenome::UniformCrossover
+GAStringGenome::EvenOddCrossover
+GAStringGenome::OnePointCrossover
+GAStringGenome::TwoPointCrossover
+GAStringGenome::PartialMatchCrossover
+GAStringGenome::OrderCrossover
+GAStringGenome::CycleCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAStringGenome::UniformInitializer
+    comparison:  GAStringGenome::ElementComparator
+      mutation:  GAStringGenome::FlipMutator
+     crossover:  GAStringGenome::UniformCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_real">
+<big><strong>GARealGenome</strong></big></a><br>
+<hr>
+<blockquote>
+The real number genome was designed to be used for applications whose representation requires an array of (possibly bounded) real number parameters.  The elements of the array can assume bounded values, discretized bounded values, or enumerated values, depending on the type of allele set that is used to create the genome.  You can mix the bounding within the genome by specifying an appropriate array of allele sets.  The allele set defines the possible values that each element in the genome may assume.
+<p>
+The real number genome is a specialization of the <a href="#genome_1darrayallele">array genome with alleles</a>.  The specialization is of type <code>float</code>.  You must create an allele set or array of allele sets before you can instantiate this genome.
+</p> 
+<p>
+If you create a real number genome using a single allele set, each element in the genome will use that allele set to determine its value.  If you create a real number genome using an allele set array, the genome will have a length equal to the number of elements in the array and each element of the real number will be governed by the allele set corresponding to its location in the genome.
+</p>
+<p>
+To use the real genome in your code, you must include the real genome header file in each of your files that uses the real genome.  You must also include the real genome source file (it contains template specialization code) in <i>one</i> (and only one) of your source files.  Including the real genome source file will force the compiler to use the real specializations.  If you do not include the real genome source file you will get the generic array routines instead (and some of the allele methods will not work as expected).
+</p>
+
+<i>see also: <a href="#genome_1darrayallele">GA1DArrayAlleleGenome</a></i><br>
+<i>see also: <a href="#alleleset">GAAlleleSet</a></i>
+<i>see also: <a href="#allelesetarray">GAAlleleSetArray</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+typedef GAAlleleSet&lt;float&gt;                    GARealAlleleSet
+typedef GAAlleleSetCore&lt;float&gt;                GARealAlleleSetCore
+typedef GAAlleleSetArray&lt;float&gt;               GARealAlleleSetArray
+typedef GA1DArrayAlleleGenome&lt;float&gt;          GARealGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GARealGenome(unsigned int length,
+             const GARealAlleleSet &amp;,
+             GAGenome::Evaluator objective = <i>NULL</i>,
+             void * userData = <i>NULL</i>)
+GARealGenome(const GARealAlleleSetArray &amp;,
+             GAGenome::Evaluator objective = <i>NULL</i>,
+             void * userData = <i>NULL</i>)
+GARealGenome(const GARealGenome&amp;)
+</pre>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GARealGenome::UniformInitializer
+GARealGenome::OrderedInitializer
+GARealGenome::FlipMutator
+GARealGenome::SwapMutator
+GARealGaussianMutator
+GARealGenome::UniformCrossover
+GARealGenome::EvenOddCrossover
+GARealGenome::OnePointCrossover
+GARealGenome::TwoPointCrossover
+GARealGenome::PartialMatchCrossover
+GARealGenome::OrderCrossover
+GARealGenome::CycleCrossover
+GARealBlendCrossover
+GARealArithmeticCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GARealGenome::UniformInitializer
+    comparison:  GARealGenome::ElementComparator
+      mutation:  GARealGaussianMutator
+     crossover:  GARealGenome::UniformCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br> 
+<a name="genome_bin2dec">
+<big><strong>GABin2DecGenome</strong></big></a>
+<hr>
+<blockquote>
+This genome is an implementation of the traditional method for converting binary strings to decimal values.  It contains a mechanism for customized encoding of the bit string; binary-to-decimal and one form of Gray coding are built in to the library.  The default is binary-to-decimal mapping (counting in base 2).  To use this genome, you must create a mapping of bits to decimal values by specifying how many bits will be used to represent what bounded numbers.  The binary-to-decimal genome is derived from the 1DBinaryStringGenome class.
+<p>
+You must create a phenotype before you can instantiate this genome.  The phenotype defines how bits should map into decimal values and vice versa.  A single binary-to-decimal phenotype contains the number of bits used to represent the decimal value and the minimum and maximum decimal values to which the set of bits will map.
+</p> 
+
+<i>see also: <a href="#genome_1dbinstr">GA1DBinaryStringGenome</a></i><br>
+<i>see also: <a href="#phenotype_b2d">GABin2DecPhenotype</a></i><br>
+<i>see also: <a href="#crossover">GACrossover</a></i>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GABin2DecGenome : public GA1DBinaryStringGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GABin2DecGenome(const GABin2DecPhenotype &amp;,
+                GAGenome::Evaluator objective = <i>NULL</i>,
+                void * userData = <i>NULL</i>)
+GABin2DecGenome(const GABin2DecGenome&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const GABin2DecPhenotype&amp; <b>phenotypes</b>(const GABin2DecPhenotype &amp;)
+const GABin2DecPhenotype&amp; <b>phenotypes</b>() const
+                       int <b>nPhenotypes</b>() const
+                     float <b>phenotype</b>(unsigned int n) const
+                     float <b>phenotype</b>(unsigned int n, float value)
+
+                      void <b>encoder</b>(GABinaryEncoder)
+                      void <b>decoder</b>(GABinaryDecoder)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>encoder</b>
+  <dt><b>decoder</b>
+  <dd>Use these member functions to set the encoder/decoder for the genome.  These functions determine what method will be used for converting the binary bits to decimal numbers.  The functions that you specify here must have the proper <a href="#signatures">signature</a>.
+
+  <dt><b>nPhenotype</b>
+  <dd>Returns the number of phenotypes (i.e. the number of decimal values represented) in the genome.
+       
+  <dt><b>phenotypes</b>
+  <dd>Set/Get the mapping from binary to decimal numbers.
+
+  <dt><b>phenotype</b>
+  <dd>Set/Get the specified phenotype.
+       
+</dl>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA1DBinaryStringGenome::UniformInitializer
+    comparison:  GA1DBinaryStringGenome::BitComparator
+      mutation:  GA1DBinaryStringGenome::FlipMutator
+     crossover:  GA1DBinaryStringGenome::OnePointCrossover
+   de/encoding:  GABinaryEncode/GABinaryDecode
+</pre>
+</blockquote>
+
+<big><strong>additional information</strong></big><br>
+<blockquote>
+Conversion functions are defined for transforming strings of bits to decimal values and vice versa.  The function prototypes for the encoding (decimal-to-binary) and decoding (binary-to-decimal) are defined as follows:
+<pre>
+typedef int (*GABinaryEncoder)(float&amp; value, GABit* bits,
+			       unsigned int nbits, float min, float max);
+typedef int (*GABinaryDecoder)(float&amp; value, const GABit* bits,
+			       unsigned int nbits, float min, float max);
+</pre>
+<p>
+The library includes the following binary-to-decimal/decimal-to-binary converters:
+</p>
+<dl>
+  <dt>GABinaryEncode/GABinaryDecode
+  <dd>Convert using a binary coding scheme.
+
+  <dt>GAGrayEncode/GAGrayDecode
+  <dd>Convert using a Gray coding scheme.
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_1dbinstr">
+<big><strong>GA1DBinaryStringGenome</strong></big></a>
+<hr>
+<blockquote>
+The binary string genome is derived from the GABinaryString and GAGenome classes.  It is a string of 1s and 0s whose length may be fixed or variable.
+<p>
+The genes in this genomes are bits.  The alleles for each bit are 0 and 1.
+</p>
+
+<i>see also: <a href="#binstr">GABinaryString</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA1DBinaryStringGenome : public GABinaryString, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA1DBinaryStringGenome(unsigned int x,
+                       GAGenome::Evaluator objective = <i>NULL</i>,
+                       void * userData = <i>NULL</i>)
+GA1DBinaryStringGenome(const GA1DBinaryStringGenome&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+short <b>gene</b>(unsigned int x = <i>0</i>) const
+short <b>gene</b>(unsigned int, short value)
+  int <b>length</b>() const
+  int <b>length</b>(int l)
+  int <b>resize</b>(int x)
+  int <b>resizeBehaviour</b>() const
+  int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx)
+ void <b>copy</b>(const GA1DBinaryStringGenome &amp;,
+           unsigned int xdest, unsigned int xsrc, unsigned int length)
+ void <b>set</b>(unsigned int x, unsigned int length)
+ void <b>unset</b>(unsigned int x, unsigned int length)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified bit.
+
+<dt><b>length</b>
+<dd>Set/Get the length of the bit string.
+
+<dt><b>resize</b>
+<dd>Set the length of the bit string.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+
+<dt><b>set</b>
+<dt><b>unset</b>
+<dd>Set/Unset the bits in the specified range.  If you specify a range that is not represented by the genome, the range that you specified will be clipped to fit the genome.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA1DBinaryStringGenome::UniformInitializer
+GA1DBinaryStringGenome::SetInitializer
+GA1DBinaryStringGenome::UnsetInitializer
+GA1DBinaryStringGenome::FlipMutator
+GA1DBinaryStringGenome::BitComparator
+GA1DBinaryStringGenome::UniformCrossover
+GA1DBinaryStringGenome::EvenOddCrossover
+GA1DBinaryStringGenome::OnePointCrossover
+GA1DBinaryStringGenome::TwoPointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA1DBinaryStringGenome::UniformInitializer
+    comparison:  GA1DBinaryStringGenome::BitComparator
+      mutation:  GA1DBinaryStringGenome::FlipMutator
+     crossover:  GA1DBinaryStringGenome::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_2dbinstr">
+<big><strong>GA2DBinaryStringGenome</strong></big></a><br>
+<hr>
+<blockquote>
+The binary string genome is derived from the GABinaryString and GAGenome classes.  It is a matrix of 1s and 0s whose width and height may be fixed or variable.
+<p>
+The genes in this genomes are bits.  The alleles for each bit are 0 and 1.
+</p>
+
+<i>see also: <a href="#binstr">GABinaryString</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA2DBinaryStringGenome : public GABinaryString, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA2DBinaryStringGenome(unsigned int x, unsigned int y,
+                       GAGenome::Evaluator objective = <i>NULL</i>,
+                       void * userData = <i>NULL</i>)
+GA2DBinaryStringGenome(const GA2DBinaryStringGenome &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+short <b>gene</b>(unsigned int x, unsigned int y) const
+short <b>gene</b>(unsigned int x, unsigned int y, const short value)
+  int <b>width</b>() const
+  int <b>width</b>(int w)
+  int <b>height</b>() const
+  int <b>height</b>(int h)
+  int <b>resize</b>(int x, int y)
+  int <b>resizeBehaviour</b>(GADimension which) const 
+  int <b>resizeBehaviour</b>(GADimension which,
+                      unsigned int min, unsigned int max)
+  int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx, 
+                      unsigned int miny, unsigned int maxy)
+ void <b>copy</b>(const GA2DBinaryStringGenome &amp;, 
+           unsigned int xdest, unsigned int ydest,
+           unsigned int xsrc, unsigned int ysrc, 
+           unsigned int width, unsigned int height)
+ void <b>set</b>(unsigned int, unsigned int, unsigned int, unsigned int)
+ void <b>unset</b>(unsigned int, unsigned int, unsigned int, unsigned int)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.  If you specify a range that is not represented by the genome, the range that you specified will be clipped to fit the genome.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified bit.
+
+<dt><b>height</b>
+<dd>Set/Get the height of the bit string.
+
+<dt><b>resize</b>
+<dd>Set the size of the genome to the specified dimensions.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+
+<dt><b>set</b>
+<dt><b>unset</b>
+<dd>Set/Unset the bits in the specified range.  If you specify a range that is not represented by the genome, the range that you specified will be clipped to fit the genome.
+
+<dt><b>width</b>
+<dd>Set/Get the width of the bit string.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA2DBinaryStringGenome::UniformInitializer
+GA2DBinaryStringGenome::SetInitializer
+GA2DBinaryStringGenome::UnsetInitializer
+GA2DBinaryStringGenome::FlipMutator
+GA2DBinaryStringGenome::BitComparator
+GA2DBinaryStringGenome::UniformCrossover
+GA2DBinaryStringGenome::EvenOddCrossover
+GA2DBinaryStringGenome::OnePointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA2DBinaryStringGenome::UniformInitializer
+    comparison:  GA2DBinaryStringGenome::BitComparator
+      mutation:  GA2DBinaryStringGenome::FlipMutator
+     crossover:  GA2DBinaryStringGenome::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br>
+<a name="genome_3dbinstr">
+<big><strong>GA3DBinaryStringGenome</strong></big></a><br>
+<hr>
+<blockquote>
+The binary string genome is derived from the GABinaryString and GAGenome classes.  It is a three-dimensional block of 1s and 0s whose width, height, and depth can be fixed or variable.
+<p>
+The genes in this genomes are bits.  The alleles for each bit are 0 and 1.
+</p>
+
+<i>see also: <a href="#binstr">GABinaryString</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA3DBinaryStringGenome : public GABinaryString, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA3DBinaryStringGenome(unsigned int x, unsigned int y, unsigned int z,
+                       GAGenome::Evaluator objective = <i>NULL</i>,
+                       void * userData = <i>NULL</i>)
+GA3DBinaryStringGenome(const GA3DBinaryStringGenome&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+short <b>gene</b>(unsigned int x, unsigned int y, unsigned int z) const
+short <b>gene</b>(unsigned int x, unsigned int y, unsigned int z, short value)
+  int <b>width</b>() const
+  int <b>width</b>(int w)
+  int <b>height</b>() const
+  int <b>height</b>(int h)
+  int <b>depth</b>() const
+  int <b>depth</b>(int d)
+  int <b>resize</b>(int x, int y, int z)
+  int <b>resizeBehaviour</b>(GADimension which) const
+  int <b>resizeBehaviour</b>(GADimension which,
+                      unsigned int min, unsigned int max)
+  int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx, 
+                      unsigned int miny, unsigned int maxy, 
+                      unsigned int minz, unsigned int maxz)
+ void <b>copy</b>(const GA3DBinaryStringGenome &amp;, 
+           unsigned int xdest, unsigned int ydest, unsigned int zdest,
+           unsigned int xsrc, unsigned int ysrc, unsigned int zsrc,
+           unsigned int width, unsigned int height, unsigned int depth);
+ void <b>set</b>(unsigned int, unsigned int,
+	  unsigned int, unsigned int,
+	  unsigned int, unsigned int);
+ void <b>unset</b>(unsigned int, unsigned int,
+	    unsigned int, unsigned int,
+	    unsigned int, unsigned int);
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.  If you specify a range that is not represented by the genome, the range that you specified will be clipped to fit the genome.
+
+<dt><b>depth</b>
+<dd>Set/Get the depth of the bit string.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified bit.
+
+<dt><b>height</b>
+<dd>Set/Get the height of the bit string.
+
+<dt><b>resize</b>
+<dd>Set the size of the genome to the specified dimensions.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+
+<dt><b>set</b>
+<dt><b>unset</b>
+<dd>Set/Unset the bits in the specified range.  If you specify a range that is not represented by the genome, the range that you specified will be clipped to fit the genome.
+
+<dt><b>width</b>
+<dd>Set/Get the width of the bit string.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA3DBinaryStringGenome::UniformInitializer
+GA3DBinaryStringGenome::SetInitializer
+GA3DBinaryStringGenome::UnsetInitializer
+GA3DBinaryStringGenome::FlipMutator
+GA3DBinaryStringGenome::BitComparator
+GA3DBinaryStringGenome::UniformCrossover
+GA3DBinaryStringGenome::EvenOddCrossover
+GA3DBinaryStringGenome::OnePointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA3DBinaryStringGenome::UniformInitializer
+    comparison:  GA3DBinaryStringGenome::BitComparator
+      mutation:  GA3DBinaryStringGenome::FlipMutator
+     crossover:  GA3DBinaryStringGenome::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_1darray">
+<big><strong>GA1DArrayGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The 1D array genome is a generic, resizable array of objects.  It is a template class derived from the GAGenome class as well as the GAArray&lt;&gt; class.
+<p>
+Each element in the array is a gene.  The values of the genes are determines by the type of the genome.  For example, an array of ints may have integer values whereas an array of doubles may have floating point values.
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA1DArrayGenome&lt;T&gt; : public GAArray&lt;T&gt;, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA1DArrayGenome(unsigned int length,
+                GAGenome::Evaluator objective = <i>NULL</i>,
+                void * userData = <i>NULL</i>)
+GA1DArrayGenome(const GA1DArrayGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const T &amp; <b>gene</b>(unsigned int x=0) const
+      T &amp; <b>gene</b>(unsigned int x=0)
+      T &amp; <b>gene</b>(unsigned int x, const T&amp; value)
+const T &amp; <b>operator[]</b>(unsigned int x) const
+      T &amp; <b>operator[]</b>(unsigned int x)
+      int <b>length</b>() const
+      int <b>length</b>(int l)
+      int <b>resize</b>(int x)
+      int <b>resizeBehaviour</b>() const
+      int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx)
+     void <b>copy</b>(const GA1DArrayGenome&lt;T&gt;&amp; original,
+                unsigned int dest, unsigned int src, unsigned int length)
+     void <b>swap</b>(unsigned int x1, unsigned int x2)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified element.
+
+<dt><b>length</b>
+<dd>Set/Get the length.
+
+<dt><b>resize</b>
+<dd>Set the length.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+
+<dt><b>swap</b>
+<dd>Swap the specified elements.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA1DArrayGenome&lt;&gt;::SwapMutator
+GA1DArrayGenome&lt;&gt;::ElementComparator
+GA1DArrayGenome&lt;&gt;::UniformCrossover
+GA1DArrayGenome&lt;&gt;::EvenOddCrossover
+GA1DArrayGenome&lt;&gt;::OnePointCrossover
+GA1DArrayGenome&lt;&gt;::TwoPointCrossover
+GA1DArrayGenome&lt;&gt;::PartialMatchCrossover
+GA1DArrayGenome&lt;&gt;::OrderCrossover
+GA1DArrayGenome&lt;&gt;::CycleCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAGenome::NoInitializer
+    comparison:  GA1DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA1DArrayGenome&lt;&gt;::SwapMutator
+     crossover:  GA1DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br> 
+<br> 
+<a name="genome_1darrayallele">
+<big><strong>GA1DArrayAlleleGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The one-dimensional array allele genome is derived from the one-dimensional array genome class.  It shares the same behaviors, but adds the features of allele sets.  The value assumed by each element in an array allele genome depends upon the allele set specified for that element.  In the simplest case, you can create a single allele set which defines the possible values for any element in the array.  More complicated examples can have a different allele set for each element in the array.
+<p>
+If you create the genome with a single allele set, the genome will have a length that you specify and the allele set will be used for the mapping of each element.  If you create the genome using an array of allele sets, the genome will have a length equal to the number of allele sets in the array and each element of the array will be mapped using the corresponding allele set.
+</p>
+<p>
+When you define an allele set for an array genome, the genome makes its own copy.  Subsequent clones of this genome will refer to the original genome's allele set (allele sets do reference counting).
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_1darray">GA1DArrayGenome</a></i><br>
+<i>see also: <a href="#alleleset">GAAlleleSet</a></i><br>
+<i>see also: <a href="#allelesetarray">GAAlleleSetArray</a></i>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA1DArrayAlleleGenome&lt;T&gt; : public GAArrayGenome&lt;T&gt;
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA1DArrayAlleleGenome(unsigned int length,
+                      const GAAlleleSet&lt;T&gt;&amp; alleleset,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA1DArrayAlleleGenome(const GAAlleleSetArray&lt;T&gt;&amp; allelesets,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA1DArrayAlleleGenome(const GA1DArrayAlleleGenome&lt;T&gt;&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const GAAlleleSet&lt;T&gt;&amp; <b>alleleset</b>(unsigned int i = <i>0</i>) const
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>alleleset</b>
+  <dd>Returns a reference to the allele set for the specified gene.  If the genome was created using a single allele set, the allele set will be the same for every gene.  If the genome was created using an allele set array, each gene may have a different allele set.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA1DArrayAlleleGenome&lt;&gt;::UniformInitializer
+GA1DArrayAlleleGenome&lt;&gt;::OrderedInitializer
+GA1DArrayAlleleGenome&lt;&gt;::FlipMutator
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA1DArrayAlleleGenome&lt;&gt;::UniformInitializer
+    comparison:  GA1DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA1DArrayAlleleGenome&lt;&gt;::FlipMutator
+     crossover:  GA1DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_2darray">
+<big><strong>GA2DArrayGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The two-dimensional array genome is a generic, resizable array of objects.  It is a template class derived from the GAGenome class as well as the GAArray&lt;&gt; class.
+<p>
+Each element in the array is a gene.  The values of the genes are determines by the type of the genome.  For example, an array of ints may have integer values whereas an array of doubles may have floating point values.
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA2DArrayGenome&lt;T&gt; : public GAArray&lt;T&gt;, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA2DArrayGenome(unsigned int width, unsigned int height,
+                GAGenome::Evaluator objective = <i>NULL</i>,
+                void * userData = <i>NULL</i>)
+GA2DArrayGenome(const GA2DArrayGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const T &amp; <b>gene</b>(unsigned int x, unsigned int y) const
+      T &amp; <b>gene</b>(unsigned int x, unsigned int y)
+      T &amp; <b>gene</b>(unsigned int x, unsigned int y, const T&amp; value)
+      int <b>width</b>() const
+      int <b>width</b>(int w)
+      int <b>height</b>() const
+      int <b>height</b>(int h)
+      int <b>resize</b>(int x, int y)
+      int <b>resizeBehaviour</b>(GADimension which) const
+      int <b>resizeBehaviour</b>(GADimension which, 
+                            unsigned int min, unsigned int max)
+      int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx, 
+                            unsigned int miny, unsigned int maxy)
+     void <b>copy</b>(const GA2DArrayGenome&lt;T&gt;&amp; original,
+                unsigned int xdest, unsigned int ydest,
+                unsigned int xsrc, unsigned int ysrc,
+                unsigned int width, unsigned int height)
+     void <b>swap</b>(unsigned int x1, unsigned int y1,
+                unsigned int x2, unsigned int y2)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified element.
+
+<dt><b>height</b>
+<dd>Set/Get the height.
+
+<dt><b>resize</b>
+<dd>Change the size to the specified dimensions.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+<p>
+The <b>resizeBehaviour</b> function works similarly to that of the 1D array genome.  In this case, however, you must also specify for which dimension you are setting the resize behavior.  When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or gaNoResize if the size is fixed.
+</p>
+
+<dt><b>swap</b>
+<dd>Swap the specified elements.
+
+<dt><b>width</b>
+<dd>Set/Get the width.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA2DArrayGenome&lt;&gt;::SwapMutator
+GA2DArrayGenome&lt;&gt;::ElementComparator
+GA2DArrayGenome&lt;&gt;::UniformCrossover
+GA2DArrayGenome&lt;&gt;::EvenOddCrossover
+GA2DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAGenome::NoInitializer
+    comparison:  GA2DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA2DArrayGenome&lt;&gt;::SwapMutator
+     crossover:  GA2DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_2darrayallele">
+<big><strong>GA2DArrayAlleleGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The two-dimensional array allele genome is derived from the two-dimensional array genome class.  It shares the same behaviors, but adds the features of allele sets.  The value assumed by each element in an array allele genome depends upon the allele set specified for that element.  In the simplest case, you can create a single allele set which defines the possible values for any element in the array.  More complicated examples can have a different allele set for each element in the array.
+<p>
+The genome will have width and height that you specify and the allele set will be used for the mapping of each element.  When you define an allele set for an array genome, the genome makes its own copy.  Subsequent clones of this genome will refer to the original genome's allele set (allele sets do reference counting).
+</p>
+<p>
+If you create a genome using an allele set array, the array of alleles will be mapped to the two dimensions in the order width-then-height.
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_2darray">GA2DArrayGenome</a></i><br>
+<i>see also: <a href="#alleleset">GAAlleleSet</a></i><br>
+<i>see also: <a href="#allelesetarray">GAAlleleSetArray</a></i>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA1DArrayAlleleGenome&lt;T&gt; : public GAArrayGenome&lt;T&gt;
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA2DArrayAlleleGenome(unsigned int width, unsigned int height,
+                      GAAlleleSet&lt;T&gt;&amp; alleles,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA2DArrayAlleleGenome(unsigned int width, unsigned int height,
+                      GAAlleleSetArray&lt;T&gt;&amp; allelesets,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA2DArrayAlleleGenome(const GA2DArrayAlleleGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const GAAlleleSet&lt;T&gt;&amp; <b>alleleset</b>(unsigned int i = <i>0</i>, unsigned int j = <i>0</i>) const
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>alleleset</b>
+  <dd>Returns a reference to the allele set for the specified gene.  If the genome was created using a single allele set, the allele set will be the same for every gene.  If the genome was created using an allele set array, each gene may have a different allele set.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA2DArrayAlleleGenome&lt;&gt;::UniformInitializer
+GA2DArrayAlleleGenome&lt;&gt;::FlipMutator
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA2DArrayAlleleGenome&lt;&gt;::UniformInitializer
+    comparison:  GA2DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA2DArrayAlleleGenome&lt;&gt;::FlipMutator
+     crossover:  GA2DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_3darray">
+<big><strong>GA3DArrayGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The three-dimensional array genome is a generic, resizable array of objects.  It is a template class derived from the GAGenome class as well as the GAArray&lt;&gt; class.
+<p>
+Each element in the array is a gene.  The values of the genes are determines by the type of the genome.  For example, an array of ints may have integer values whereas an array of doubles may have floating point values.
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_base">GAGenome</a></i><br>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA3DArrayGenome&lt;T&gt; : public GAArray&lt;T&gt;, public GAGenome
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA3DArrayGenome(unsigned int width, unsigned int height, unsigned int depth,
+                GAGenome::Evaluator objective = <i>NULL</i>,
+                void * userData = <i>NULL</i>)
+GA3DArrayGenome(const GA3DArrayGenome&lt;T&gt;&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const T &amp; <b>gene</b>(unsigned int x, unsigned int y, unsigned int z) const
+      T &amp; <b>gene</b>(unsigned int x, unsigned int y, unsigned int z)
+      T &amp; <b>gene</b>(unsigned int x, unsigned int y, unsigned int z, const T&amp; value)
+      int <b>width</b>() const
+      int <b>width</b>(int w)
+      int <b>height</b>() const
+      int <b>height</b>(int h)
+      int <b>depth</b>() const
+      int <b>depth</b>(int d)
+      int <b>resize</b>(int x, int y, int z)
+      int <b>resizeBehaviour</b>(GADimension which) const
+      int <b>resizeBehaviour</b>(GADimension which,
+                            unsigned int min, unsigned int max)
+      int <b>resizeBehaviour</b>(unsigned int minx, unsigned int maxx, 
+                            unsigned int miny, unsigned int maxy,
+                            unsigned int minz, unsigned int maxz)
+     void <b>copy</b>(const GA3DArrayGenome&lt;T&gt;&amp; original,
+                unsigned int xdest, unsigned int ydest, unsigned int zdest,
+                unsigned int xsrc, unsigned int ysrc, unsigned int zsrc,
+                unsigned int width, unsigned int height, unsigned int depth)
+     void <b>swap</b>(unsigned int x1, unsigned int y1, unsigned int z1,
+                unsigned int x2, unsigned int y2, unsigned int z2)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>copy</b>
+<dd>Copy the specified bits from the designated genome.
+
+<dt><b>depth</b>
+<dd>Set/Get the depth.
+
+<dt><b>gene</b>
+<dd>Set/Get the specified element.
+
+<dt><b>height</b>
+<dd>Set/Get the height.
+
+<dt><b>resize</b>
+<dd>Change the size to the specified dimensions.
+
+<dt><b>resizeBehaviour</b>
+<dd>Set/Get the resize behavior.  The min value specifies the minimum allowable length, the max value specifies the maximum allowable length.  If min and max are equal, the genome is not resizable.
+<p>
+Use the <b>resizeBehaviour</b> and <b>resize</b> member functions to control the size of the genome.  The default behavior is fixed size.  Using the <b>resizeBehaviour</b> method you can specify minimum and maximum values for the size of the genome.  If you specify minimum and maximum as the same values then fixed size is assumed.  If you use the <b>resize</b> method to specify a size that is outside the bounds set earlier using <b>resizeBehaviour</b>, the bounds will be 'stretched' to accommodate the value you specify with <b>resize</b>.  Conversely, if the values you specify with <b>resizeBehaviour</b> conflict with the genome's current size, the genome will be resized to accommodate the new values.
+</p>
+<p>
+When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or GAGenome::FIXED_SIZE if the size is fixed.
+</p>
+<p>
+The <b>resizeBehaviour</b> function works similarly to that of the 1D array genome.  In this case, however, you must also specify for which dimension you are setting the resize behavior.  When <b>resizeBehaviour</b> is called with no arguments, it returns the maximum size if the genome is resizable, or gaNoResize if the size is fixed.
+</p>
+
+<dt><b>swap</b>
+<dd>Swap the specified elements.
+
+<dt><b>width</b>
+<dd>Set/Get the width.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA3DArrayGenome&lt;&gt;::SwapMutator
+GA3DArrayGenome&lt;&gt;::ElementComparator
+GA3DArrayGenome&lt;&gt;::UniformCrossover
+GA3DArrayGenome&lt;&gt;::EvenOddCrossover
+GA3DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GAGenome::NoInitializer
+    comparison:  GA3DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA3DArrayGenome&lt;&gt;::SwapMutator
+     crossover:  GA3DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="genome_3darrayallele">
+<big><strong>GA3DArrayAlleleGenome&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The three-dimensional array allele genome is derived from the three-dimensional array genome class.  It shares the same behaviors, but adds the features of allele sets.  The value assumed by each element in an array allele genome depends upon the allele set specified for that element.  In the simplest case, you can create a single allele set which defines the possible values for any element in the array.  More complicated examples can have a different allele set for each element in the array.
+<p>
+The genome will have width, height, and depth that you specify and the allele set will be used for the mapping of each element.  When you define an allele set for an array genome, the genome makes its own copy.  Subsequent clones of this genome will refer to the original genome's allele set (allele sets do reference counting).
+</p>
+<p>
+If you create a genome using an allele set array, the array of alleles will be mapped to the three dimensions in the order width-then-height-then-depth.
+</p>
+
+<i>see also: <a href="#array">GAArray</a></i><br>
+<i>see also: <a href="#genome_3darray">GA3DArrayGenome</a></i><br>
+<i>see also: <a href="#alleleset">GAAlleleSet</a></i><br>
+<i>see also: <a href="#allelesetarray">GAAlleleSetArray</a></i>
+</blockquote>
+
+
+<big><strong>class hierarchy</strong></big><br>
+<blockquote>
+<pre>
+class GA1DArrayAlleleGenome&lt;T&gt; : public GAArrayGenome&lt;T&gt;
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GA3DArrayAlleleGenome(unsigned int width, unsigned int height, unsigned int depth,
+                      GAAlleleSet&lt;T&gt;&amp; alleles,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA3DArrayAlleleGenome(unsigned int width, unsigned int height, unsigned int depth,
+                      GAAlleleSet&lt;T&gt;&amp; alleles,
+                      GAGenome::Evaluator objective = <i>NULL</i>,
+                      void * userData = <i>NULL</i>)
+GA3DArrayAlleleGenome(const GA3DArrayAlleleGenome&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+const GAAlleleSet&lt;T&gt;&amp; <b>alleleset</b>(unsigned int i = <i>0</i>,
+                                 unsigned int j = <i>0</i>,
+                                 unsigned int k = <i>0</i>) const
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>alleleset</b>
+  <dd>Returns a reference to the allele set for the specified gene.  If the genome was created using a single allele set, the allele set will be the same for every gene.  If the genome was created using an allele set array, each gene may have a different allele set.
+
+</dl>
+</blockquote>
+
+<big><strong>genetic operators for this class</strong></big><br>
+<blockquote>
+<pre>
+GA3DArrayAlleleGenome&lt;&gt;::UniformInitializer
+GA3DArrayAlleleGenome&lt;&gt;::FlipMutator
+</pre>
+</blockquote>
+
+<big><strong>default genetic operators</strong></big><br>
+<blockquote>
+<pre>
+initialization:  GA3DArrayAlleleGenome&lt;&gt;::UniformInitializer
+    comparison:  GA3DArrayGenome&lt;&gt;::ElementComparator
+      mutation:  GA3DArrayAlleleGenome&lt;&gt;::FlipMutator
+     crossover:  GA3DArrayGenome&lt;&gt;::OnePointCrossover
+</pre>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="phenotype_b2d">
+<big><strong>GABin2DecPhenotype</strong></big></a><br>
+<hr>
+<blockquote>
+The binary-to-decimal phenotype defines the mapping from binary string to decimal values.  A mapping for a single binary-to-decimal conversion consists of a range of decimal values and a number of bits.  For example, a map of 8 bits and range of [0,255] would use 8 bits to represent the numbers from 0 to 255, inclusive.
+<p>
+This object does reference counting in order to minimize the memory overhead imposed by instantiating binary-to-decimal mappings.
+</p>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GABin2DecPhenotype()
+GABin2DecPhenotype(const GABin2DecPhenotype&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+ void <b>add</b>(unsigned int nbits, float min, float max)
+ void <b>remove</b>(unsigned int which)
+  int <b>size</b>() const
+  int <b>nPhenotypes</b>() const
+float <b>min</b>(unsigned int which) const
+float <b>max</b>(unsigned int which) const
+  int <b>length</b>(unsigned int which) const
+  int <b>offset</b>(unsigned int which) const
+
+ void <b>link</b>(GABin2DecPhenotype&amp;)
+ void <b>unlink</b>()
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+       
+  <dt><b>add</b>
+  <dd>Create a mapping that tells the phenotype that nbits should be used to represent a floating point number from min to max, inclusive.
+
+  <dt><b>link</b>
+  <dt><b>unlink</b>
+  <dd>The phenotype object does reference counting to reduce the number of instantiated objects.  Use the <b>link</b> member to make a phenotype object refer to another.  Use the <b>unlink</b> member to remove the connection.  When you unlink, the phenotype makes its own copy of the mapping information.
+
+  <dt><b>length</b>
+  <dd>Returns the number of bits required for the specified mapping.
+       
+  <dt><b>max</b>
+  <dd>Returns the maximum decimal value for the specified mapping.
+       
+  <dt><b>min</b>
+  <dd>Returns the minimum decimal value for the specified mapping.
+       
+  <dt><b>offset</b>
+  <dd>Returns the offset (in bits) for the specified mapping.
+
+  <dt><b>remove</b>
+  <dd>Removes a single binary-to-decimal from the phenotype.
+
+  <dt><b>size</b>
+  <dd>Returns the number of bits that the set of mappings requires for converting a decimal value to binary and back again.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="alleleset">
+<big><strong>GAAlleleSet&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The allele set class is a container for the different values that a gene may assume.  It can contain objects of any type as long as the object has the =, ==, and != operators defined.
+<p>
+Allele sets may be enumerated, bounded, or bounded with discretization.  For example, an integer allele set may be defined as {1,3,5,2,99,-53} (an enumerated set).  A bounded float set may be defined such as [2,743) (the set of numbers from 2, inclusive, to 743, exclusive).  A bounded, discretized set may defined such as [4.5,7.05](0.05) (the set of numbers from 4.5 to 7.5, inclusive, with increment of 0.05).
+</p>
+<p>
+If you call the <b>allele</b> member function with no argument, the allele set picks randomly from the alleles it contains and returns one of them.
+</p>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAAlleleSet()
+GAAlleleSet(unsigned int n, const T a[])
+GAAlleleSet(const T&amp; lower, const T&amp; upper, 
+	    GAAllele::BoundType lowerbound=GAAllele::INCLUSIVE, 
+	    GAAllele::BoundType upperbound=GAAllele::INCLUSIVE)
+GAAlleleSet(const T&amp; lower, const T&amp; upper, const T&amp; increment,
+	    GAAllele::BoundType lowerbound=GAAllele::INCLUSIVE, 
+	    GAAllele::BoundType upperbound=GAAllele::INCLUSIVE)
+GAAlleleSet(const GAAlleleSet&lt;T&gt;&amp; set)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+   GAAlleleSet&lt;T&gt; * <b>clone</b>() const
+
+                  T <b>add</b>(const T&amp; allele)
+                  T <b>remove</b>(T&amp; allele)
+                  T <b>allele</b>() const
+                  T <b>allele</b>(unsigned int i)
+                int <b>size</b>() const
+
+                  T <b>lower</b>() const
+                  T <b>upper</b>() const
+                  T <b>inc</b>() const
+GAAllele::BoundType <b>lowerBoundType</b>() const
+GAAllele::BoundType <b>upperBoundType</b>() const
+     GAAllele::Type <b>type</b>() const
+
+               void <b>link</b>(GAAlleleSet&lt;T&gt;&amp;)
+               void <b>unlink</b>()
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>add</b>
+<dt><b>remove</b>
+<dd>Add/Remove the indicated allele from the set.  This method works only for enumerated allele sets.  Both functions return zero if the operation was successful, non-zero status otherwise.
+
+<dt><b>lower</b>
+<dt><b>upper</b>
+<dd>Returns the lower/upper bounds on the allele set.  If the allele set is enumerated, lower returns the first element of the set and upper returns the last element of the set.
+
+<dt><b>inc</b>
+<dd>Returns the increment of the allele set.  If the set is not discretized, the first element or lower bounds of the set is returned.
+
+<dt><b>lowerBoundType</b>
+<dt><b>upperBoundType</b>
+<dd>Returns GAAllele::INCLUSIVE or GAAllele::EXCLUSIVE to indicate the type of bound on the limits of the allele set.  If no bounds have been defined, these method return GAAllele::NONE.
+
+<dt><b>link</b>
+<dt><b>unlink</b>
+<dd>The alleleset object does reference counting to reduce the number of instantiated objects.  Use the <b>link</b> member to make an alleleset object refer to the data in another.  Use the <b>unlink</b> member to remove the connection.  When you unlink, the alleleset makes its own copy of the set data.
+
+<dt><b>size</b>
+<dd>Returns the number of elements in the allele set.  This member is meaningful only for the enumerated allele set.
+
+<dt><b>type</b>
+<dd>Returns GAAllele::ENUMERATED, GAAllele::BOUNDED, or GAAllele::DISCRETIZED to indicate the type of allele set that has been defined.  The type of the allele set is specified by the creator used to instantiate the allele set.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="allelesetarray">
+<big><strong>GAAlleleSetArray&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The GAAlleleSetArray is a container object with an array of allele sets.
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAAlleleSetArray()
+GAAlleleSetArray(const GAAlleleSet&lt;T&gt;&amp;)
+GAAlleleSetArray(const GAAlleleSetArray&lt;T&gt;&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+                  int <b>size</b>() const
+const GAAlleleSet&lt;T&gt;&amp; <b>set</b>(unsigned int i) const
+                  int <b>add</b>(const GAAlleleSet&lt;T&gt;&amp; s)
+                  int <b>add</b>(unsigned int n, const T a[])
+                  int <b>add</b>(const T&amp; lower, const T&amp; upper,
+	                  GAAllele::BoundType lb=GAAllele::INCLUSIVE,
+	                  GAAllele::BoundType ub=GAAllele::INCLUSIVE)
+                  int <b>add</b>(const T&amp; lower, const T&amp; upper, const T&amp; increment,
+	                  GAAllele::BoundType lb=GAAllele::INCLUSIVE, 
+	                  GAAllele::BoundType ub=GAAllele::INCLUSIVE)
+                  int <b>remove</b>(unsigned int)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>add</b>
+<dd>Use the add members to append an allele set to the end of the array.  Each of the overloaded add members invokes a corresponding allele set creator, so you can use the appropriate add member for your particular allele set application.
+
+<dt><b>remove</b>
+<dd>Remove the indicated allele set from the array.  Returns zero if successful, non-zero otherwise.
+
+<dt><b>size</b>
+<dd>Returns the number of allele sets in the array.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="statistics">
+<big><strong>GAStatistics</strong></big></a><br>
+<hr>
+<blockquote>
+The statistics object contains information about the current state of the genetic algorithm objects.  Every genetic algorithm contains a statistics object.
+<p>
+The statistics object defines the following enumerated constants for use by the <b>selectScores</b> member.  They can be bitwise-ORed to specify desired combinations of components.  Use the class name to refer to the values, for example GAStatistics::Mean | GAStatistics::Deviation
+</p>
+</blockquote>
+
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+enum { <b>NoScores</b>,
+       <b>Mean</b>, <b>Maximum</b>, <b>Minimum</b>, <b>Deviation</b>,
+       <b>Diversity</b>,
+       <b>AllScores</b> }
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAStatistics()
+GAStatistics(const GAStatistics&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+     void <b>copy</b>(const GAStatistics &amp;);
+
+    float <b>online</b>() const
+    float <b>offlineMax</b>() const
+    float <b>offlineMin</b>() const
+    float <b>initial</b>(ScoreID w=Maximum) const
+    float <b>current</b>(ScoreID w=Maximum) const
+    float <b>maxEver</b>() const
+    float <b>minEver</b>() const
+
+      int <b>generation</b>() const
+    float <b>convergence</b>() const
+      int <b>selections</b>() const
+      int <b>crossovers</b>() const
+      int <b>mutations</b>() const
+      int <b>replacements</b>() const
+
+      int <b>nConvergence</b>(unsigned int)
+      int <b>nConvergence</b>() const
+      int <b>nBestGenomes</b>(const GAGenome&amp;, unsigned int)
+      int <b>nBestGenomes</b>() const
+      int <b>scoreFrequency</b>(unsigned int x)
+      int <b>scoreFrequency</b>() const
+      int <b>flushFrequency</b>(unsigned int x)
+      int <b>flushFrequency</b>() const
+    char* <b>scoreFilename</b>(const char *filename)
+    char* <b>scoreFilename</b>() const
+      int <b>selectScores</b>(int whichScores)
+      int <b>selectScores</b>() const
+GABoolean <b>recordDiversity</b>(GABoolean flag)
+GABoolean <b>recordDiversity</b>() const
+     void <b>flushScores</b>()
+
+     void <b>update</b>(const GAPopulation&amp; pop)
+     void <b>reset</b>(const GAPopulation&amp; pop)
+
+const GAPopulation&amp; <b>bestPopulation</b>() const 
+    const GAGenome&amp; <b>bestIndividual</b>(unsigned int n=0) const
+
+      int <b>scores</b>(const char* filename, ScoreID which=NoScores)
+      int <b>scores</b>(ostream&amp; os, ScoreID which=NoScores)
+      int <b>write</b>(const char* filename) const
+      int <b>write</b>(ostream&amp; os) const;
+
+friend ostream&amp; <b>operator&lt;&lt;</b>(ostream&amp;, const GAStatistics&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+<dt><b>bestIndividual</b>
+<dd>This function returns a reference to the best individual encountered by the genetic algorithm.
+
+<dt><b>bestPopulation</b>
+<dd>This function returns a reference to a population containing the best individuals encountered by the genetic algorithm.  The size of this population is specified using the nBestGenomes member function.
+
+<dt><b>convergence</b>
+<dd>Returns the current convergence.  Here convergence means the ratio of the <i>n</i>th previous best-of-generation to the current best-of-generation.
+
+<dt><b>crossovers</b>
+<dd>Returns the number of crossovers that have occurred since initialization.
+
+<dt><b>current</b>
+<dd>Returns the specified score from the current population.
+
+<dt><b>flushFrequency</b>
+<dd>Set/Get the frequency at which the generational scores should be flushed to disk.  A score frequency of 100 means that at every 100th recorded score the scores buffer will be appended to the scores file.
+
+<dt><b>flushScores</b>
+<dd>Force a flush of the scores buffer to the score file.
+
+<dt><b>generation</b>
+<dd>Returns the current generation number.
+
+<dt><b>initial</b>
+<dd>Returns the specified score from the initial population.
+
+<dt><b>maxEver</b>
+<dd>Returns the maximum score ever encountered.
+
+<dt><b>minEver</b>
+<dd>Returns the minimum score ever encountered.
+
+<dt><b>mutations</b>
+<dd>Returns the number of mutations that have occurred since initialization.
+
+<dt><b>nBestGenomes</b>
+<dd>Set/Get the number of unique best genomes to keep.
+
+<dt><b>nConvergence</b>
+<dd>Set/Get the number of generations to use for the convergence measure.  A value of 10 means the best-of-generation from 10 generations previous will be used for the convergence test.
+
+<dt><b>offlineMax</b>
+<dd>Returns the average of the maximum scores.
+
+<dt><b>offlineMin</b>
+<dd>Returns the average of the minimum scores.
+
+<dt><b>online</b>
+<dd>Returns the average of all scores.
+
+<dt><b>recordDiversity</b>
+<dd>This boolean option determines whether or not the diversity of the population will be calculated each generation.  By default, this option is set to false.
+
+<dt><b>replacements</b>
+<dd>Returns the number of replacements that have occurred since initialization.
+
+<dt><b>reset</b>
+<dd>Reset the contents of the statistics object using the contents of the specified population.
+
+<dt><b>scoreFilename</b>
+<dd>Set the name of the file to which the scores should be output.  If the filename is set to nil, the scores will not be written to disk.  The default filename is "generations.dat".
+
+<dt><b>scoreFrequency</b>
+<dd>Set/Get the frequency at which the generational scores should be recorded.  A score frequency of 1 means the scores will be recorded each generation.  The default depends on the type of genetic algorithm that is being used.
+
+<dt><b>scores</b>
+<dd>Print the generational scores to the specified stream.  Output is tab-delimited with each line containing the generation number and the specified scores.  You can specify which score you would like by logically ORing one of the score identifiers listed above.  The order of the tab-delimited scores is as follows:
+<pre>
+generation  TAB  mean  TAB  max  TAB  min  TAB deviation  TAB  diversity NEWLINE
+</pre>
+
+<dt><b>selections</b>
+<dd>Returns the number of selections that have occurred since initialization.
+
+<dt><b>selectScores</b>
+<dd>This function is used to specify which scores should be saved to disk.  The argument is the logical OR of the following values:  Mean, Maximum, Minimum, Deviation, Diversity (all defined in the scope of the GAStatistics object).  To record all of the scores, pass GAStatistics::AllScores.
+
+<dt><b>update</b>
+<dd>Update the contents of the statistics object to reflect the state of the specified population.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="parameters">
+<big><strong>GAParameterList</strong></big></a><br>
+<hr>
+<blockquote>
+The parameter list object contains information about how genetic algorithms should behave.  Each parameter list contains an array of parameters.  Each parameter is a name-value pair, where the name is a string (e.g. "number_of_generations") and the value is an int, float, double, char, string, boolean, or pointer.
+<p>
+Each parameter is uniquely identified by a pair of names: the full name and the short name.  Associated with the names is a value.  Each parameter also has a type from the enumerated list of types shown above.  The GAParameter object automatically does type coercion of the pointer that is passed to it based upon the type that is passed to it upon its creation.  The type cannot be changed once the parameter has been created.
+</p>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+  enum GAParameter::Type {BOOLEAN, CHAR, STRING, INT, FLOAT, DOUBLE, POINTER};
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAParameter(const char* fn, const char* sn, Type tp, const void* v)
+GAParameter(const GAParameter&amp; orig)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+          void <b>copy</b>(const GAParameter&amp;)
+         char* <b>fullname</b>() const
+         char* <b>shrtname</b>() const
+   const void* <b>value</b>() const 
+   const void* <b>value</b>(const void* v) 
+          Type <b>type</b>() const
+</pre>
+</blockquote>
+
+
+
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAParameterList()
+GAParameterList(const GAParameterList&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+         int <b>size</b>() const
+         int <b>get</b>(const char*, void*) const
+         int <b>set</b>(const char*, const void*)
+         int <b>set</b>(const char* s, int v)
+         int <b>set</b>(const char* s, unsigned int v)
+         int <b>set</b>(const char* s, char v)
+         int <b>set</b>(const char* s, char* v)
+         int <b>set</b>(const char* s, double v)
+         int <b>add</b>(const char*, const char*, GAParameter::Type, const void*)
+         int <b>remove</b>();
+GAParameter&amp; <b>operator[]</b>(unsigned int i) const
+GAParameter&amp; <b>next</b>()
+GAParameter&amp; <b>prev</b>()
+GAParameter&amp; <b>current</b>() const
+GAParameter&amp; <b>first</b>()
+GAParameter&amp; <b>last</b>()
+GAParameter* <b>operator()</b>(const char* name)
+         int <b>parse</b>(int&amp; argc, char **argv, GABoolean flag = <i>gaFalse</i>)
+
+         int <b>write</b>(const char* filename) const
+         int <b>write</b>(ostream&amp; os) const
+         int <b>read</b>(const char* filename)
+         int <b>read</b>(istream&amp; is)
+
+friend ostream&amp; <b>operator&lt;&lt;</b>(ostream&amp; os, const GAParameterList&amp; plist)
+friend istream&amp; <b>operator&gt;&gt;</b>(istream&amp; is, GAParameterList&amp; plist)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>add</b>
+  <dd>Add a parameter with specified name, type, and default value to the parameter list.  This becomes the current parameter.
+
+  <dt><b>current</b>
+  <dd>Return a reference to the current parameter in the list.
+
+  <dt><b>first</b>
+  <dd>Return a reference to the first parameter in the list.  This becomes the current parameter.
+
+  <dt><b>get</b>
+  <dd>Fills the contents of the space pointed to by ptr with the current value of the named parameter.  Returns 0 if the parameter was found, non-zero otherwise.
+
+  <dt><b>last</b>
+  <dd>Return a reference to the last parameter in the list.  This becomes the current parameter.
+
+  <dt><b>next</b>
+  <dd>Return a reference to the next parameter in the list.  This becomes the current parameter.
+
+  <dt><b>parse</b>
+  <dd>Parse an argument list (in command-line format) for recognized name-value pairs.  If you pass gaTrue as the third argument then this method will post warnings about names that it does not recognize.
+
+  <dt><b>prev</b>
+  <dd>Return a reference to the next parameter in the list.  This becomes the current parameter.
+
+  <dt><b>read</b>
+  <dd>Read a parameter list from the specified file or stream.
+
+  <dt><b>set</b>
+  <dd>Set the named parameter to the specified value.  Returns 0 if the paramter was found and successfully set, non-zero otherwise.  You can use either the full or short name to specify a parameter.
+
+  <dt><b>size</b>
+  <dd>Returns the number of parameters in the parameter list.
+
+  <dt><b>remove</b>
+  <dd>Remove the current parameter from the parameter list.
+
+  <dt><b>write</b>
+  <dd>Write the parameter list to the specified file or stream.
+       
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="pop">
+<big><strong>GAPopulation</strong></big></a><br>
+<hr>
+<blockquote>
+The population object is a container for the genomes.  It also contains population statistics such as average, maximum, and minimum genome objective scores.  Each population contains a scaling object that is used to determine the fitness of its genomes.  The population also contains a function used for selecting individuals from the population.
+<p>
+Whenever possible, the population caches the statistics.  This means that the first call to one of the statistics members will be slower than subsequent calls.
+</p>
+<p>
+You can customize the initialization, evaluation, and sort methods.  Use the appropriate member function.  Your customized functions must have the appropriate <a href="#signatures">signature</a>. 
+</p>
+<p>
+The default scaling scheme is linear scaling.  The default evaluator invokes the objective function for each genome.  The default selector is roulette wheel and uses the scaled (fitness) scores for its selections.
+</p>
+</blockquote>
+
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+     void (*<b>GAPopulation::Initializer</b>)(GAPopulation &amp;)
+     void (*<b>GAPopulation::Evaluator</b>)(GAPopulation &amp;)
+
+  enum SortBasis { <b>RAW</b>, <b>SCALED</b> };
+  enum SortOrder { <b>LOW_IS_BEST</b>, <b>HIGH_IS_BEST</b> };
+enum Replacement { <b>BEST</b> = -1, <b>WORST</b> = -2, <b>RANDOM</b> = -3 };
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAPopulation()
+GAPopulation(const GAGenome&amp;, unsigned int popsize = <i>gaDefPopSize</i>)
+GAPopulation(const GAPopulation&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+  GAPopulation * <b>clone</b>() const
+            void <b>copy</b>(const GAPopulation&amp;)
+
+             int <b>size</b>(unsigned int popsize)
+             int <b>size</b>() const
+
+           float <b>sum</b>() const
+           float <b>ave</b>() const
+           float <b>var</b>() const
+           float <b>dev</b>() const
+           float <b>max</b>() const
+           float <b>min</b>() const
+           float <b>div</b>() const
+           float <b>div</b>(unsigned int i, unsigned int j) const
+
+           float <b>fitsum</b>() const
+           float <b>fitave</b>() const
+           float <b>fitmax</b>() const
+           float <b>fitmin</b>() const
+           float <b>fitvar</b>() const
+           float <b>fitdev</b>() const
+           float <b>psum</b>(unsigned int i) const
+
+             int <b>nevals</b>() const
+
+            void <b>touch</b>() 
+            void <b>statistics</b>(GABoolean flag = <i>gaFalse</i>) const;
+            void <b>diversity</b>(GABoolean flag = <i>gaFalse</i>) const;
+
+              void <b>prepselect</b>(GABoolean flag = <i>gaFalse</i>) const;
+         GAGenome&amp; <b>select</b>()
+GASelectionScheme&amp; <b>selector</b>() const
+GASelectionScheme&amp; <b>selector</b>(const GASelectionScheme&amp;)
+
+              void <b>scale</b>(GABoolean flag = <i>gaFalse</i>) const;
+  GAScalingScheme&amp; <b>scaling</b>() const
+  GAScalingScheme&amp; <b>scaling</b>(const GAScalingScheme&amp;)
+
+              void <b>sort</b>(GABoolean flag = <i>gaFalse</i>, SortBasis basis = <i>RAW</i>) const;
+         SortOrder <b>order</b>() const
+         SortOrder <b>order</b>(SortOrder flag)
+
+                     void <b>evaluate</b>(GABoolean flag = <i>gaFalse</i>) const
+  GAPopulation::Evaluator <b>evaluator</b>(GAPopulation::Evaluator func)
+  GAPopulation::Evaluator <b>evaluator</b>(GAPopulation::Evaluator func)
+
+                     void <b>initialize</b>()
+GAPopulation::Initializer <b>initializer</b>(GAPopulation::Initializer func)
+GAPopulation::Initializer <b>initializer</b>(GAPopulation::Initializer func)
+
+GAGeneticAlgorithm * <b>geneticAlgorithm</b>() const
+GAGeneticAlgorithm * <b>geneticAlgorithm</b>(GA&amp;)
+              void * <b>userData</b>() const
+              void * <b>userData</b>(void * u)
+        GAEvalData * <b>evalData</b>() const
+        GAEvalData * <b>evalData</b>(const GAEvalData&amp;)
+
+      GAGenome&amp; <b>individual</b>(unsigned int x, SortBasis basis = <i>RAW</i>) const
+      GAGenome&amp; <b>best</b>(unsigned int i = <i>0</i>, SortBasis basis = <i>RAW</i>) const
+      GAGenome&amp; <b>worst</b>(unsigned int i = <i>0</i>, SortBasis basis = <i>RAW</i>) const
+
+      GAGenome * <b>add</b>(GAGenome *)
+      GAGenome * <b>add</b>(const GAGenome&amp;)
+      GAGenome * <b>remove</b>(unsigned int i, SortBasis basis = <i>RAW</i>)
+      GAGenome * <b>remove</b>(GAGenome *)
+      GAGenome * <b>replace</b>(GAGenome *, int which = <i>gaPopReplaceRandom</i>, SortBasis basis = <i>RAW</i>)
+      GAGenome * <b>replace</b>(GAGenome *, GAGenome *)
+            void <b>destroy</b>(int w = <i>WORST</i>, SortBasis basis = <i>RAW</i>)
+
+    virtual void <b>read</b>(istream &amp;)
+    virtual void <b>write</b>(ostream &amp;) const
+
+friend ostream&amp; <b>operator&lt;&lt;</b>(ostream &amp;, const GAPopulation &amp;)
+friend istream&amp; <b>operator&gt;&gt;</b>(istream &, GAPopulation &)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>add</b>
+  <dd>Add the specified individual to the population.  If you call this method with a reference to a genome, the population will clone the genome.  If you call this method with a pointer to a genome, the population will use the genome pointed to by the pointer.  From then on the population is responsible for deleting the genome.
+
+  <dt><b>ave</b>
+  <dd>Returns the average of the objective scores.
+
+  <dt><b>best</b>
+  <dd>Returns a reference to the best individual in the population.  Use the SortBasis flag to specify whether you want the best in terms of raw objective score or scaled (fitness) score.
+
+  <dt><b>destroy</b>
+  <dd>Remove the specified individual from the population and free the memory used by that individual.  Use the SortBasis flag to specify whether to use raw objective score or scaled (fitness) score when determining which genome to destroy.
+
+  <dt><b>dev</b>
+  <dd>Returns the standard deviation of the objective scores.
+
+  <dt><b>div</b>
+  <dd>Returns the diversity of the population.  Diversity is a number between 0 and 1 where 1 indicates that each individual is completely different than every other individual.  If you specify two indices, this member function returns the diversity of the specified individuals (it invokes the comparison function for those individuals).
+
+  <dt><b>evalData</b>
+  <dd>Set/Get the evaluation data for the population.  This object is unrelated to any evaluation data objects used by the genomes in the population.
+
+  <dt><b>evaluate</b>
+  <dd>Evaluate the population using the method set by the <b>evaluator</b> function.  The default evaluator simply calls the evaluate member of each genome in the population.  If you call this function with gaTrue then the population performs the evaluation even if it has already cached the evaluation results.
+
+  <dt><b>evaluator</b>
+  <dd>Specifies which function to use to evaluate the population.  The specified function must have the proper  <a href="#signatures">signature</a>.
+
+  <dt><b>fitave</b>
+  <dd>Returns the average of the fitness scores.
+
+  <dt><b>fitdev</b>
+  <dd>Returns the standard deviation of the fitness scores.
+
+  <dt><b>fitmax</b>
+  <dd>Returns the maximum fitness score.
+
+  <dt><b>fitmin</b>
+  <dd>Returns the minimum fitness score.
+
+  <dt><b>fitsum</b>
+  <dd>Returns the sum of the fitness scores.
+
+  <dt><b>fitvar</b>
+  <dd>Returns the variance of the fitness scores.
+
+  <dt><b>geneticAlgorithm</b>
+  <dd>Set/Get the genetic algorithm that 'owns' this population.  A return value of nil indicates that the population is owned by no genetic algorithm.
+
+  <dt><b>individual</b>
+  <dd>Returns a reference to the specified individual.  Indices for individuals in the population start at 0 and go to size()-1.  the <i>0</i>th individual is the best individual when the population has been sorted.  Use the SortBasis flag to specify whether you want the <i>i</i>th individual based upon the raw objective score or scaled (fitness) score.
+
+  <dt><b>initialize</b>
+  <dd>Initialize the population using the method set by <b>initializer</b>.  The default initializer simply calls the initialize method of each genome in the population.
+
+  <dt><b>initializer</b>
+  <dd>Specifies which function to use to initialize the population.  The specified function must have the proper  <a href="#signatures">signature</a>.
+
+  <dt><b>max</b>
+  <dd>Returns the maximum objective score in the population.
+
+  <dt><b>min</b>
+  <dd>Returns the minimum objective score in the population.
+
+  <dt><b>order</b>
+  <dd>Set/Get the sort order.  A population may be sorted in two ways, highest-score-is-best or lowest-score-is-best.
+
+  <dt><b>prepselect</b>
+  <dd>The function calls the selector's <b>update</b> method.  It is typically called by the population before it does a selection.
+
+  <dt><b>psum</b>
+  <dd>Returns the partial sum of the <i>i</i>th fitness score in the array of (sorted) fitness scores.
+
+  <dt><b>remove</b>
+  <dd>Remove the specified individual from the population.  The genome to be replaced can be specified by either an index or by pointer.  This function returns a pointer to the genome that was removed from the population.  The caller is responsible for the memory used by the returned genome.  Use the SortBasis flag to specify whether to use raw objective score or scaled (fitness) score when determining which genome to remove.
+
+  <dt><b>replace</b>
+  <dd>Replace the specified individual with the first argument.  The genome to be replaced can be specified by either an index or by pointer.  This function returns a pointer to the genome that was replaced.  If no genome was replaced or the specified index or pointer is bogus, it returns nil.  Use the SortBasis flag to specify whether to use raw objective score or scaled (fitness) score when determining which genome to replace.
+
+  <dt><b>scale</b>
+  <dd>Scale the raw (objective) scores in the population using the scaling method.  If you call this function with gaTrue then the scaled scores are recalculated even if the population has already cached them.
+
+  <dt><b>scaling</b>
+  <dd>Set/Get the scaling method for this population.
+
+  <dt><b>select</b>
+  <dd>Returns a reference to a genome from the population using the selection scheme associated with the population.
+
+  <dt><b>selector</b>
+  <dd>Set/Get the selection method for this population.
+
+  <dt><b>size</b>
+  <dd>Set/Get the number of individuals in the population.  If you resize to a larger size, the new individuals will be initialized but not evaluated.  If you resize to a smaller size, the best individuals will be kept.
+
+  <dt><b>sort</b>
+  <dd>Sort the individuals in the population.  Individuals may be sorted based upon their raw or scaled scores.
+
+  <dt><b>statistics</b>
+  <dd>Calculate the population statistics.  This method is automatically invoked whenever any of the population statistics are requested.  If you call this function with gaTrue then the statistics are recalculated even if the population has already cached them.
+     
+  <dt><b>sum</b>
+  <dd>Returns the sum of the objective scores.
+
+  <dt><b>touch</b>
+  <dd>The population object remembers its state so that it does not execute the evaluate or sort methods unless its state has been changed.  If you want to force the population to execute any of its methods the next time they are invoked, invoke this method.
+
+  <dt><b>userData</b>
+  <dd>Set/Get the user data pointer for the population.  You can use the user data member to store a pointer to any object.
+
+  <dt><b>var</b>
+  <dd>Returns the variance of the objective scores.
+
+  <dt><b>worst</b>
+  <dd>Returns a reference to the worst individual in the population.  Use the SortBasis flag to specify whether you want the worst in terms of raw objective score or scaled (fitness) score.
+
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="scaling">
+<big><strong>GAScalingScheme</strong></big></a><br>
+<hr>
+<blockquote>
+The scaling object is embedded in the population object.  This object keeps track of the fitness scores (not the objective scores) of each individual in the population.  
+<p>
+The base scaling object is not instantiable.  The genomes that it returns are the genomes in the population to which it is linked; it does not make its own copies.
+</p>
+<p>
+For details about how to write your own scaling scheme, see the <a href="Extensions.html">customizations</a> page.
+</p>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAScalingScheme()
+GAScalingScheme(const GAScalingScheme&amp; s)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+virtual GAScalingScheme * <b>clone</b>() const
+             virtual void <b>copy</b>(const GAScalingScheme &amp;)
+             virtual void <b>evaluate</b>(const GAPopulation &amp; p)
+</pre>
+</blockquote>
+
+<big><strong>built-in scaling schemes</strong></big><br>
+<blockquote>
+<p>
+GAlib contains a number of instantiable scaling objects derived from the base class.  Here are the constructors for these scaling schemes:
+</p>
+<dl>
+  <p>
+  <dt><b>GANoScaling</b>()
+  <dd>The fitness scores are identical to the objective scores.  No scaling takes place.
+       </p>
+       <p>
+  <dt><b>GALinearScaling</b>(float c = <i>gaDefLinearScalingMultiplier</i>)
+  <dd>The fitness scores are derived from the objective scores using the linear scaling method described in Goldberg's book.  You can specify the scaling coefficient.  Negative objective scores are not allowed with this method.  Objective scores are converted to fitness scores using the relation
+       <pre>
+       f = a * obj + b
+       </pre>
+       where a and b are calculated based upon the objective scores of the individuals in the population as described in Goldberg's book.
+       </p>
+       <p>
+  <dt><b>GASigmaTruncationScaling</b>(float c = <i>gaDefSigmaTruncationMultiplier</i>)
+  <dd>Use this scaling method if your objective scores will be negative.  It scales based on the variation from the population average and truncates arbitrarily at 0.  The mapping from objective to fitness score for each individual is given by
+       <pre>
+       f = obj - (obj_ave - c * obj_dev)
+       </pre>
+       </p>
+       <p>
+  <dt><b>GAPowerLawScaling</b>(int k = <i>gaDefPowerScalingFactor</i>)
+  <dd>Power law scaling maps objective scores to fitness scores using an exponential relationship defined as
+       <pre>
+       f = obj ^ k
+       </pre>
+       </p>
+       <p>
+  <dt><b>GASharing</b>(GAGenomeComparator func = <i>0</i>, float cutoff = <i>gaDefSharingCutoff</i>, float alpha = <i>1</i>)
+  <dd>This scaling method is used to do speciation.  The fitness score is derived from its objective score by comparing the individual against the other individuals in the population.   If there are other similar individuals then the fitness is derated.  The distance function is used to specify how similar to each other two individuals are.  A distance function must return a value of 0 or higher, where 0 means that the two individuals are identical (no diversity).  For a given individual,
+       </p>
+       <pre>
+       f = obj / summation( s( d(j)))         for all j = [0,popsize]
+
+                   /
+                  |   1 - (d(j) / sigma) ^ alpha        d(j) &lt; sigma
+       s(d(j)) =  |
+                  |   0                                 d(j) &gt;= sigma
+                   \
+
+       d(j) = distance function with respect to individual j
+       </pre>
+       <p>
+       The default sharing object uses the triangular sharing function described in Goldberg's book.  You can specify the cutoff value (sigma in Goldberg's book) using the <b>sigma</b> member function.  The curvature of the sharing function is controlled by the <b>alpha</b> value.  When alpha is 1.0 the sharing function is a straight line (triangular sharing).  If you specify a comparator, that function will be used as the distance function for all comparisons.  If you do not specify a comparator, the sharing object will use the default comparator of each genome.
+       </p>
+       <p>
+       Notice that the sharing scaling differs depending on whether the objective is to maximized or minimized.  If the goal is to maximize the objective score, the raw scores will be divided by the sharing factor.  If the goal is to minimize the objective score, the raw scores will be multiplied by the sharing factor.  You can explicitly tell the sharing object to do minimize- or maximize-based scaling by using the <b>minimaxi</b> member function.  By default, it uses the min/max settings of the genetic algorithm that is using it (based on information in the population with which the sharing object is associated).  If the scaling object is associated with a population that has been created independently of any genetic algorithm object, the sharing object will use the population's <b>order</b> to decide whether to multiply or divide to do its scaling.
+       </p>
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="selection">
+<big><strong>GASelectionScheme</strong></big></a><br>
+<hr>
+<blockquote>
+Selection schemes are used to pick genomes from a population for mating.  The GASelectionScheme object defines the basic selector behavior.  It is an abstract class and cannot be instantiated.  Each selector object may be linked to a population from which it will make its selections.  The <b>select</b> member returns a reference to a single genome.  A selector may operate on the scaled objective scores or the raw objective scores.  Default behavior is to operate on the scaled (fitness) scores.
+<p>
+For details about how to write your own selection scheme, see the <a href="Extensions.html">customizations</a> page.
+</p>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+  enum { <b>RAW</b>, <b>SCALED</b> };
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+  GASelectionScheme(int which = <i>SCALED</i>)
+  GASelectionScheme(const GASelectionScheme&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+virtual GASelectionScheme* <b>clone</b>() const;
+              virtual void <b>copy</b>(const GASelectionScheme&amp; orig)
+              virtual void <b>assign</b>(GAPopulation&amp; pop)
+              virtual void <b>update</b>()
+         virtual GAGenome&amp; <b>select</b>() const;
+</pre>
+</blockquote>
+
+<big><strong>built-in scaling schemes</strong></big><br>
+<blockquote>
+<p>
+GAlib contains a number of instantiable scaling objects derived from the base class.  Here are the constructors for these scaling schemes:
+</p>
+<dl>
+  <p>
+  <dt><b>GARankSelector</b>
+  <dd>The rank selector picks the best member of the population every time.
+       </p>
+       <p>
+  <dt><b>GARouletteWheelSelector</b>
+  <dd>This selection method picks an individual based on the magnitude of the fitness score relative to the rest of the population.  The higher the score, the more likely an individual will be selected.  Any individual has a probability p of being chosen where p is equal to the fitness of the individual divided by the sum of the fitnesses of each individual in the population.
+       </p>
+       <p>
+  <dt><b>GATournamentSelector</b>
+  <dd>The tournament selector uses the roulette wheel method to select two individuals then picks the one with the higher score.  The tournament selector typically chooses higher valued individuals more often than the RouletteWheelSelector.
+       </p>
+       <p>
+  <dt><b>GADSSelector</b>
+  <dd>The deterministic sampling selector (DS) uses a two-staged selection procedure.  In the first stage, each individual's expected representation is calculated.  A temporary population is filled using the individuals with the highest expected numbers.  Any remaining positions are filled by first sorting the original individuals according to the decimal part of their expected representation, then selecting those highest in the list.  The second stage of selection is uniform random selection from the temporary population.
+       </p>
+       <p>
+  <dt><b>GASRSSelector</b>
+  <dd>The stochastic remainder sampling selector (SRS) uses a two-staged selection procedure.  In the first stage, each individual's expected representation is calculated.  A temporary population is filled using the individuals with the highest expected numbers.  Any fractional expected representations are used to give the individual more likeliehood of filling a space.  For example, an individual with e of 1.4 will have 1 position then a 40% chance of a second position.  The second stage of selection is uniform random selection from the temporary population.
+       </p>
+       <p>
+  <dt><b>GAUniformSelector</b>
+  <dd>The stochastic uniform sampling selector picks randomly from the population.  Any individual in the population has a probability p of being chosen where p is equal to 1 divided by the population size.
+       </p>
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="binstr">
+<big><strong>GABinaryString</strong></big></a><br>
+<hr>
+<blockquote>
+<p>
+The binary string object is a simple implementation of a string of bits.  Each bit is represented by a single word of memory (no fancy bit-munging happens here).  The binary string class defines the following member functions.  Binary strings are resizable.
+</p>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GABinaryString(unsigned int length)
+GABinaryString(const GABinaryString&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+ void <b>copy</b>(const GABinaryString&amp;)
+  int <b>resize</b>(unsigned int)
+  int <b>size</b>() const
+
+short <b>bit</b>(unsigned int a) const
+short <b>bit</b>(unsigned int a, short val)
+  int <b>equal</b>(const GABinaryString&amp; b,
+	    unsigned int dest, unsigned int src, unsigned int length) const
+ void <b>copy</b>(const GABinaryString&amp; orig,
+           unsigned int dest, unsigned int src, unsigned int length)
+ void <b>move</b>(unsigned int dest, unsigned int src, unsigned int length)
+ void <b>set</b>(unsigned int a, unsigned int length)
+ void <b>unset</b>(unsigned int a, unsigned int length)
+ void <b>randomize</b>(unsigned int a, unsigned int length)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+
+  <dt><b>copy</b>
+  <dd>Makes an exact copy of the specified string.  If invoked with a range of bits then copies the specified range of bits.
+       
+  <dt><b>bit</b>
+  <dd>Set/Get the specified bit.
+       
+  <dt><b>equal</b>
+  <dd>Returns 1 if the specified range of bits are equal, 0 otherwise.
+       
+  <dt><b>move</b>
+  <dd>Move <i>length</i> bits starting at <i>src</i> to <i>dest</i>.
+       
+  <dt><b>set/unset</b>
+  <dd>Set/Unset <i>length</i> bits starting at <i>a</i>
+       
+  <dt><b>size</b>
+  <dt><b>resize</b>
+  <dd>Set/Get the length of the bit string.
+       
+  <dt><b>randomize</b>
+  <dd>Set to random values <i>length</i> bits starting at <i>a</i>
+       
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="array">
+<big><strong>GAArray&lt;T&gt;</strong></big></a><br>
+<hr>
+<blockquote>
+The GAArray&lt;T&gt; object is defined for your convenience so that you do not have to create your own array object.  It is a template-ized container class whose elements can contain objects of any type.  The 1-, 2-, and 3-dimensional arrays used in GAlib are all based upon this single-dimensional array object.  This object is defined in the file arraytmpl.h.
+<p>
+<img src="images/GAArray.gif" alt="array" align=left>
+<strong><i>The GAArray object</i></strong><br>
+<small><i>The squares are elements in the array.  Arrays are 1 dimensional, but derived classes can have 2 or more dimensions.  Each element contains a user-specified object.</i></small>
+<br clear=all>
+</p>
+<p>
+Any object in the array must have the following methods defined and publicly available:
+</p>
+<ul>
+<li>copy constructor
+<li>operator =
+<li>operator ==
+<li>operator !=
+</ul>
+<p>
+The elements in an array are indexed starting with 0 (the first element in the array is element number 0).  The last element in array with <i>n</i> elements is element <i>n-1</i>.
+</p>
+</blockquote>
+
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAArray(unsigned int)
+GAArray(const GAArray&lt;T&gt;&amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+GAArray&lt;T&gt; &amp; <b>operator=</b>(const GAArray&lt;T&gt;&amp; orig)
+GAArray&lt;T&gt; &amp; <b>operator=</b>(const T array [])
+GAArray&lt;T&gt; * <b>clone</b>()
+   const T &amp; <b>operator[]</b>(unsigned int i) const
+         T &amp; <b>operator[]</b>(unsigned int i)
+        void <b>copy</b>(const GAArray&lt;T&gt;&amp; orig)
+        void <b>copy</b>(const GAArray&lt;T&gt;&amp; orig, unsigned int dest,
+	          unsigned int src, unsigned int length)
+        void <b>move</b>(unsigned int dest,
+	          unsigned int src, unsigned int length)
+        void <b>swap</b>(unsigned int i, unsigned int j)
+         int <b>size</b>() const
+         int <b>size</b>(unsigned int n)
+         int <b>equal</b>(const GAArray&lt;T&gt;&amp; b,
+	           unsigned int dest, unsigned int src,
+	           unsigned int length) const
+
+         int <b>operator==</b>(const GAArray&lt;T&gt;&amp; a, const GAArray&lt;T&gt;&amp; b)
+         int <b>operator!=</b>(const GAArray&lt;T&gt;&amp; a, const GAArray&lt;T&gt;&amp; b)
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<dl>
+  
+  <dt><b>clone</b>
+  <dd>Return a pointer to an exact duplicate of the original array.  The caller is responsible for the memory allocated by the call to this function.
+ 
+  <dt><b>copy</b>
+  <dd>Duplicate the specified array or part of the specified array.  If duplicating a part of the specified array, <i>length</i> elements starting at position <i>src</i> in the original are copied into position <i>dest</i> in the copy.  If there is not enough space in the copy, the extra elements are not copied.
+
+  <dt><b>equal</b>
+  <dd>Return 1 if the specified portion of the two arrays is identical, return 0 otherwise.
+       
+  <dt><b>move</b>
+  <dd>Move the number of elements specified with <i>length</i> from position <i>src</i> to position <i>dest</i>.
+
+  <dt><b>operator[]</b>
+  <dd>Return a reference to the contents of the <i>i</i>th element of the array.
+      
+  <dt><b>size</b>
+  <dd>Return the number of elements in the array.
+       
+  <dt><b>swap</b>
+  <dd>Swap the contents of element <i>i</i> with the contents of element <i>j</i>.
+       
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="list">
+<big><strong>GAList&lt;T&gt;</strong></big></a> and <big><strong>GAListIter&lt;T&gt;</strong></big><br>
+<hr>
+<blockquote>
+The GAList&lt;T&gt; object is defined for your convenience so that you do not have to create your own list object.  It is a template-ized container class whose nodes can contain objects of any type.  The GAList&lt;T&gt; object is circular and doubly-linked.  A list iterator object is also defined to be used when moving around the list to keep track of the current, next, previous, or whichever node.  Iterators do not change the state of the list.
+<p>
+<img src="images/GAList.gif" alt="list" align=right>
+<strong><i>The GAList object</i></strong><br>
+<small><i>The circles are nodes in the list.  Each node contains a user-specified object; the initialization method determines the size of the list and the contents of each node.  The list is circular and doubly linked.</i></small>
+<br clear=all>
+</p>
+<p>
+The template-ized GAList&lt;T&gt; is derived from a generic list base class called GAListBASE.  The template list is defined in listtmpl.h, the list base class is defined in listbase.h
+</p>
+<p>
+Any object used in the nodes must have the following methods defined and publicly available:
+</p>
+<ul>
+<li>copy constructor
+<li>operator =
+<li>operator ==
+<li>operator !=
+</ul>
+<p>
+Each list object contains an iterator.  The list's traversal member functions (next, prev, etc) simply call the member functions on the internal iterator.  You can also instantiate iterators external to the list object so that you can traverse the list without modifying its state.
+</p>
+<p>
+The list base class defines constants for specifying where insertions should take place (these are relative to the node to which the iterator is currently pointing).
+</p>
+<p>
+Nodes in the list are numbered from 0 to 1 less than the list size.  The head node is node 0.
+</p>
+<p>
+When you do an insertion, the list makes a copy of the specified object (allocating space for it in the process).  The internal iterator is left pointing to the node which was just inserted.  The insertion function uses the copy constructor member to do this, so the objects in your list must have a copy constructor defined.  The new node is inserted relative to the current location of the list's internal iterator.  Use the <i>where</i> flag to determine whether the new node will be inserted before or after the current node, or if the new node should become the head node of the list.
+</p>
+<p>
+The remove member returns a pointer to the object that was in the specified node.  You are responsible for deallocating the memory for this object!  The destroy member deallocates the memory used by the object in the current node.  In both cases the iterator is left pointing to the node previous to the one that was deleted.
+</p>
+<p>
+All of the list traversal functions (prev, next, current, etc) return a pointer to the contents of the node on which they are operating.  You should test the pointer to see if it is NULL before you dereference it.  When you call any of the traversal functions, the list's internal iterator is left pointing to the node to which traversal function moved.  You can create additional iterators (external to the list) to keep track of multiple positions in the list.
+</p>
+</blockquote>
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+GAListBASE::<b>HEAD</b>
+GAListBASE::<b>TAIL</b>
+GAListBASE::<b>BEFORE</b>
+GAListBASE::<b>AFTER</b>
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAListIter(const GAList&lt;T&gt; &amp;)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+  T * <b>current</b>()
+  T * <b>head</b>()
+  T * <b>tail</b>()
+  T * <b>next</b>()
+  T * <b>prev</b>()
+  T * <b>warp</b>(const GAList&lt;T&gt;&amp; t)
+  T * <b>warp</b>(const GAListIter&lt;T&gt;&amp; i)
+  T * <b>warp</b>(unsigned int i)
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GAList()
+GAList(const T&amp; t)
+GAList(const GAList&ltT&gt&amp; orig)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+GAList&lt;T&gt; * <b>clone</b>()
+       void <b>copy</b>(const GAList&lt;T&gt;&amp; orig)
+       void <b>destroy</b>()
+       void <b>swap</b>(unsigned int, unsigned int)
+        T * <b>remove</b>()
+       void <b>insert</b>(GAList&lt;T&gt; * t, GAListBASE::Location where=AFTER)
+       void <b>insert</b>(const T&amp; t, GAListBASE::Location where=AFTER)
+
+        T * <b>current</b>()
+        T * <b>head</b>()
+        T * <b>tail</b>()
+        T * <b>next</b>()
+        T * <b>prev</b>()
+        T * <b>warp</b>(unsigned int i)
+        T * <b>warp</b>(const GAListIter&lt;T&gt;&amp; i)
+        T * <b>operator[]</b>(unsigned int i)
+
+        int <b>size</b>() const
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<p>
+<i>These functions change the state of the list.</i>
+</p>
+<dl>
+  
+  <dt><b>clone</b>
+  <dd>Return a pointer to an exact duplicate of the original list.  The caller is responsible for the memory allocated by the call to this function.
+       
+  <dt><b>copy</b>
+  <dd>Duplicate the specified list.
+       
+  <dt><b>destroy</b>
+  <dd>Destroy the current node in the list.  This function uses the location of the internal iterator to determine which node should be destroyed.  If the head node is destroyed, the next node in the list becomes the head node.
+          
+  <dt><b>insert</b>
+  <dd>Add a node or list to the list.  The insertion is made relative to the location of the internal iterator.  The <i>where</i> flag specifies whether the insertion should be made before or after the current node.
+     
+  <dt><b>remove</b>
+  <dd>Returns a pointer to the contents of the current node and removes the current node from the list.  The iterator moves to the previous node.  The caller is responsible for the memory used by the contents.
+       
+  <dt><b>swap</b>
+  <dd>Swap the positions of the two specified nodes.  The internal iterator is not affected.  If the iterator was pointing to one of the nodes before the swap it will still point to that node after the swap, even if that node was swapped.
+      
+</dl>
+
+<p>
+<i>These functions do not change the contents of the list, but they change the state of the list's internal iterator (when invoked on a list object).</i>
+</p>
+<dl>
+  
+  <dt><b>current</b>
+  <dd>Returns a pointer to the contents of the current node.
+       
+  <dt><b>head</b>
+  <dd>Returns a pointer to the contents of the first node in the list.
+       
+  <dt><b>next</b>
+  <dd>Returns a pointer to the contents of the next node.
+       
+  <dt><b>operator[]</b>
+  <dd>Returns a pointer to the contents of the <i>i</i>th node in the list (same as warp).
+      
+  <dt><b>prev</b>
+  <dd>Returns a pointer to the contents of the previous node.
+       
+  <dt><b>tail</b>
+  <dd>Returns a pointer to the contents of the last node in the list.
+       
+  <dt><b>warp</b>
+  <dd>Returns a pointer to the contents of the <i>i</i>th node in the list, or a pointer to the element in the list pointed to by the specified iterator.  The head node is number 0.
+ 
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+<br>
+<br>
+<a name="tree">
+<big><strong>GATree&lt;T&gt;</strong></big></a> and <big><strong>GATreeIter&lt;T&gt;</strong></big><br>
+<hr>
+<blockquote>
+The GATree&lt;T&gt; object is defined for your convenience so that you do not have to create your own tree object.  It is a template-ized container class whose nodes can contain objects of any type.  Each level in the GATree&lt;T&gt; object is a circular and doubly-linked list.  The eldest child of a level is the head of the linked list, each child in a level points to its parent, and the parent of those children points to the eldest child.  Any tree can have only one root node.  Any node can have any number of children.  A tree iterator is also defined to be used when moving around the list to keep track of the current, next, parent, or whichever node.  Iterators do not change the state of the tree.
+<p>
+<img src="images/GATree.gif" alt="tree" align=left>
+<strong><i>The GATree object</i></strong><br>
+<small><i>The circles are nodes in the tree.  Each node contains a user-specified object; the initialization method determines the tree topology and the contents of each node.  Each tree contains one (and only one) root node.  Each level in the tree is a circular, doubly linked list.  The head of each list is called the 'eldest' child, each node in a level has a link to its parent, and each parent has a link to the eldest of its children (if it has any children).</i></small>
+<br clear=all>
+</p>
+<p>
+The template-ized GATree&lt;T&gt; is derived from a generic tree base class called GATreeBASE.  The template tree is defined in treetmpl.h, the tree base class is defined in treebase.h
+</p>
+<p>
+Any object used in the nodes have the following methods defined and publicly available:
+</p>
+<ul>
+<li>copy constructor
+<li>operator =
+<li>operator ==
+<li>operator !=
+</ul>
+<p>
+Each tree object contains an iterator.  The tree's traversal member functions (next, prev, etc) simply call the member functions on the internal iterator.  You can also instantiate iterators external to the tree object so that you can traverse the tree without modifying its contents.
+</p>
+<p>
+The tree base class defines constants for specifying where insertions should occur.
+</p>
+<p>
+Nodes in a tree are numbered starting at 0 then increasing in a depth-first traversal of the tree.  The root node is node 0.  A tree can have only one root node, but any node in the tree can have any number of children.
+</p>
+<p>
+When you do an insertion, the tree makes a copy of the specified object (allocating space for it in the process).  The internal iterator is left pointing to the node which was just inserted.  The insertion function uses the copy constructor member to do this, so the objects in your tree must have a copy constructor defined.  The new node is inserted relative to the current location of the tree's internal iterator. Use the where flag to determine whether the new node will be inserted before, after, or below the current node, or if the new node should become the root node of the tree. 
+</p>
+<p>
+The remove member returns a pointer to a tree.  The root node of this tree is the node at which the iterator was pointing.  You are responsible for deallocating the memory for this tree!  The destroy member deallocates the memory used by the object in the current node and completely destroys any subtree hanging on that node.  In both cases, the iterator is left pointing to the elder child or parent of the node that was removed/destroyed.
+</p>
+<p>
+All of the tree traversal functions (prev, next, current, etc) return a pointer to the contents of the node on which they are operating.  You should test the pointer to see if it is NULL before you dereference it.  Also, the iterator is left pointing to the node to which you traverse with each traversal function.  You can create additional iterators (external to the tree) to keep track of multiple positions in the tree.
+</p>
+</blockquote>
+
+
+<big><strong>typedefs and constants</strong></big><br>
+<blockquote>
+<pre>
+GATreeBASE::<b>ROOT</b>
+GATreeBASE::<b>BEFORE</b>
+GATreeBASE::<b>AFTER</b>
+GATreeBASE::<b>BELOW</b>
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GATreeIter(const GATree&lt;T&gt;&amp; t)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+        T * <b>current</b>()
+        T * <b>root</b>()
+        T * <b>next</b>()
+        T * <b>prev</b>()
+        T * <b>parent</b>()
+        T * <b>child</b>()
+        T * <b>eldest</b>()
+        T * <b>youngest</b>()
+        T * <b>warp</b>(const GATree&lt;T&gt;&amp; t)
+        T * <b>warp</b>(const GATreeIter&lt;T&gt;&amp; i)
+        T * <b>warp</b>(unsigned int i)
+
+        int <b>size</b>()
+        int <b>depth</b>()
+        int <b>nchildren</b>()
+        int <b>nsiblings</b>()
+</pre>
+</blockquote>
+
+<big><strong>constructors</strong></big><br>
+<blockquote>
+<pre>
+GATree()
+GATree(const T&amp; t)
+GATree(const GATree&lt;T&gt;&amp; orig)
+</pre>
+</blockquote>
+
+<big><strong>member function index</strong></big><br>
+<blockquote>
+<pre>
+GATree&lt;T&gt; * <b>clone</b>()
+       void <b>copy</b>(const GATree&lt;T&gt;&amp; orig)
+       void <b>destroy</b>()
+       void <b>swaptree</b>(GATree&lt;T&gt; * t)
+       void <b>swaptree</b>(unsigned int, unsigned int)
+       void <b>swap</b>(unsigned int, unsigned int)
+GATree&lt;T&gt; * <b>remove</b>()
+       void <b>insert</b>(GATree&lt;T&gt; * t, GATreeBASE::Location where=BELOW)
+       void <b>insert</b>(const T&amp; t, GATreeBASE::Location where=BELOW)
+
+        T * <b>current</b>()
+        T * <b>root</b>()
+        T * <b>next</b>()
+        T * <b>prev</b>()
+        T * <b>parent</b>()
+        T * <b>child</b>()
+        T * <b>eldest</b>()
+        T * <b>youngest</b>()
+        T * <b>warp</b>(unsigned int i)
+        T * <b>warp</b>(const GATreeIter&lt;T&gt;&amp; i)
+
+        int <b>ancestral</b>(unsigned int i, unsigned int j) const
+        int <b>size</b>()
+        int <b>depth</b>()
+        int <b>nchildren</b>()
+        int <b>nsiblings</b>()
+</pre>
+</blockquote>
+
+<big><strong>member function descriptions</strong></big><br>
+<blockquote>
+<p>
+<i>These functions change the state of the tree.</i>
+</p>
+<dl>
+  <dt><b>clone</b>
+  <dd>Return a pointer to an exact duplicate of the original tree.  The caller is responsible for the memory allocated by the call to this function.
+       
+  <dt><b>copy</b>
+  <dd>Duplicate the specified tree.
+       
+  <dt><b>destroy</b>
+  <dd>Destroy the current node in the tree.  If the node has children, the entire sub-tree connected to the node is destroyed as well.  This function uses the location of the internal iterator to determine which node should be destroyed.  If the root node is destroyed, the entire contents of the tree will be destroyed, but the tree object itself will not be deleted.
+       
+  <dt><b>insert</b>
+  <dd>Add a node or tree to the tree.  The insertion is made relative to the location of the internal iterator.  The <i>where</i> flag specifies whether the insertion should be made before, after, or below the current node.
+       
+  <dt><b>remove</b>
+  <dd>Returns a pointer to a new tree object whose root node is the (formerly) current node of the original tree.  Any subtree connected to the node stays with the node.  The iterator moves to the previous node in the current generation, or the parent node if no elder sibling exists.  The caller is responsible for the memory used by the new tree.
+       
+  <dt><b>swap</b>
+  <dd>Swap the contents of the two specified nodes.  Sub-trees connected to either node are not affected; only the specified nodes are swapped.
+       
+  <dt><b>swaptree</b>
+  <dd>Swap the contents of the two specified nodes as well as any sub-trees connected to the specified nodes.
+       
+</dl>
+
+<i>These functions do not change the contents of the tree, but they change the state of the tree's internal iterator (when invoked on a tree object).</i>
+<dl>
+  
+  <dt><b>ancestral</b>
+  <dd>Returns 1 if one of the two specified nodes is the ancestor of the other, returns 0 otherwise.
+       
+  <dt><b>child</b>
+  <dd>Returns a pointer to the contents of the eldest child of the current node.  If the current node has no children, this function returns NULL.
+       
+  <dt><b>current</b>
+  <dd>Returns a pointer to the contents of the current node.
+       
+  <dt><b>depth</b>
+  <dd>Returns the number of generations (the depth) of the tree.  When called as the member function of a tree iterator, this function returns the depth of the subtree connected to the iterator's current node.
+       
+  <dt><b>eldest</b>
+  <dd>Returns a pointer to the contents of the eldest node in the current generation.  The eldest node is the node pointed to by the 'child' function in the node's parent.
+       
+  <dt><b>nchildren</b>
+  <dd>Returns the number of children of the node to which the iterator is pointing.
+
+  <dt><b>next</b>
+  <dd>Returns a pointer to the contents of the next node in the current generation.
+       
+  <dt><b>nsiblings</b>
+  <dd>Returns the number of nodes in the level of the tree as the node to which the iterator is pointing.
+       
+  <dt><b>parent</b>
+  <dd>Returns a pointer to the contents of the parent of the current node.  If the current node is the root node, this function returns NULL.
+       
+  <dt><b>prev</b>
+  <dd>Returns a pointer to the contents of the previous node in the current generation.
+       
+  <dt><b>root</b>
+  <dd>Returns a pointer to the contents of the root node of the tree.
+       
+  <dt><b>size</b>
+  <dd>Returns the number of nodes in the tree.  When called as the member function of a tree iterator, this function returns the size of the subtree connected to the iterator's current node.
+       
+  <dt><b>warp</b>
+  <dd>Returns a pointer to the contents of the <i>i</i>th node in the tree, or a pointer to the element in the tree pointed to by the specified iterator.  The head node is number 0 then the count increases as a depth-first traversal of the tree.
+ 
+  <dt><b>youngest</b>
+  <dd>Returns a pointer to the contents of the youngest node in the current generation.
+       
+</dl>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+<hr>
+<small><i>Matthew Wall, 28 May 1996</i></small>
+
+</body></html>

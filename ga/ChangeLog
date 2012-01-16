@@ -1,0 +1,120 @@
+2005-01-27  Matthew Wall  <mwall@gouda.local>
+
+	* gaconfig.h: added instantiation prefix for compilers that need 
+	forced instantiations but vary in their syntax.
+
+2005-01-12  Matthew Wall  <mwall@gouda.local>
+
+	* gaconfig.h: fixed comment about use of streams.
+	keep MSC_VER detection after other compilers so that the windows-
+	based compilers that are trying to be like vcpp will not be detected
+	as vcpp.
+
+2005-01-11  Matthew Wall  <mwall@localhost.localdomain>
+
+	* gaconfig.h: fixed macro definitions for streams, templates
+
+2005-01-06  Matthew Wall  <mwall@gouda.local>
+
+	* gaconfig.h: update ms compiler notes
+	fixed borland compiler version detection.
+
+2004-12-29  Matthew Wall  <mwall@gouda.local>
+
+	* GA2DArrayGenome.C: fixed oversight
+	* GASimpleGA.C: use our own seed if one was specified
+	* GAPopulation.C: keep compilers happy about redefining NOMINMAX
+	* gaversion.h: added function for programmatic access to the library
+	identifier string.
+	* GABaseGA.[hC]: added seed as a recognized option
+	* ga.h: no need to remove the deterministic crowding algorithm - it has
+	no templates.
+
+2004-12-28  Matthew Wall  <mwall@gouda.local>
+
+	* GAPopulation.C: be sure that we use the same score (just in case the
+	invocation of the score member is not deterministic).
+	* gaconfig.h: deal with assertions
+	* GASelector.C: fix end-of-array bug and added assertions to trigger
+	other bad index problems.
+
+2004-12-28  Matthew Wall  <mwall@localhost.localdomain>
+
+	* GARealGenome.C: adhere to c++ standard
+	* GAStringGenome.C: adhere to c++ standard
+	* GAListGenome.C: adhere to c++ standard
+	* GATreeGenome.C: adhere to c++ standard
+	* GA3DArrayGenome.C: adhere to c++ standard
+	* GA3DArrayGenome.h: adhere to c++ standard
+	* GA2DArrayGenome.h: adhere to c++ standard
+	* GA1DArrayGenome.C: adhere to c++ standard
+	* GA1DArrayGenome.h: adhere to c++ standard
+	* gabincvt.C: keep the compilers happy about conversions
+
+2004-12-28  Matthew Wall  <mwall@gouda.local>
+
+	* gaconfig.h: added options for ibm xlC and hp aCC compilers.
+	* GARealGenome.h: adjust instantiation sequence to prevent premature
+	instantiation (before specialization).  esp for gcc3.
+	* GAStringGenome.h: ditto
+	* garandom.C: avoid naming clashes.  eventually galib will live in its
+	own namespace, but not for now.
+	* garandom.h: dito
+	* GARealGenome.C: fix specializations
+	* GAStringGenome.C: fix specializations
+	* makefile: added ranlib for macosx, aix
+	emit compile flags to BUILD file for diagnosis.
+	
+2004-12-27  Matthew Wall  <mwall@gouda.local>
+
+	* GAGenome.h: macro name change for streams management.  include a
+	separate file for streams.
+	* GATreeGenome.C: ditto
+	* GAStringGenome.C: ditto
+	* GAStatistics.C: ditto
+	* GARealGenome.C: ditto
+	* GAPopulation.C: ditto
+	* GAParameter.C: ditto
+	* GAListGenome.C: ditto
+	* GABin2DecGenome.C: ditto
+	* GABaseGA.C: ditto
+	* GAAllele.C: ditto
+	* GA3DArrayGenome.C: ditto
+	* GA3DBinStrGenome.C: ditto
+	* GA2DBinStrGenome.C: ditto
+	* GA2DArrayGenome.C: ditto
+	* GA1DArrayGenome.C: ditto
+	* GA1DBinStrGenome.C: ditto
+	* gaerror.h: ditto
+	* GAStatistics.h: ditto
+	* GASimpleGA.h: ditto
+	* GASStateGA.h: ditto
+	* GAPopulation.h: ditto
+	* GAParameter.h: ditto
+	* GANode.h: ditto
+	* GADemeGA.h: ditto
+	* GAIncGA.h: ditto
+	* GA2DBinStrGenome.h: ditto
+	* GABin2DecGenome.h: ditto
+	* GAListGenome.h: ditto
+	* GATreeGenome.h: ditto
+	* GABaseGA.h: ditto
+	* GAAllele.h: ditto
+	* GA3DBinStrGenome.h: ditto
+	* GA3DArrayGenome.h: ditto
+	* GA2DBinStrGenome.h: ditto
+	* GA2DArrayGenome.h: ditto
+	* GA1DBinStrGenome.h: ditto
+	* GA1DArrayGenome.h: macro name change for streams management
+	* ga.h: macro name change
+	* std_stream.h: split stream inclusion into file separate from 
+	gaconfig in order to avoid clashes with 'using namespace std'
+	* gaconfig.h: renamed macros to avoid clashes with other libraries and
+	to make it easier to enable/disable features when tweaking galib to
+	work with oddball compilers and environments.
+	* gabincvt.C: use renamed macros
+	* garandom.C: change to USE_PID macro
+	* gaversion.h: added os-cpu-compiler detection to make identification
+	of binaries bit easier using strings or ident.  also the first step
+	toward autoconf-style automatic detection of stuff (hopefully without
+	all of the autoconf/automake overhead and failures).

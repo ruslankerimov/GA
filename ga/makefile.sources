@@ -1,0 +1,29 @@
+# -*- Mode: makefile -*-
+
+HDRS= ga.h gaconfig.h gatypes.h gaid.h garandom.h gaerror.h std_stream.h \
+ GAEvalData.h GAParameter.h GAStatistics.h \
+ GABaseGA.h GASStateGA.h GASimpleGA.h GAIncGA.h GADemeGA.h GADCrowdingGA.h \
+ GASelector.h GAScaling.h GAPopulation.h GAGenome.h GAMask.h \
+ GABinStr.h gabincvt.h GAAllele.h GAArray.h GANode.h \
+ GA1DBinStrGenome.h GA2DBinStrGenome.h GA3DBinStrGenome.h GABin2DecGenome.h \
+ GA1DArrayGenome.h GA2DArrayGenome.h GA3DArrayGenome.h \
+ GAStringGenome.h GARealGenome.h \
+ GATreeBASE.h GATree.h GATreeGenome.h GAListBASE.h GAList.h GAListGenome.h
+SRCS= garandom.C gaerror.C GAParameter.C GAStatistics.C \
+ GABaseGA.C GASStateGA.C GASimpleGA.C GAIncGA.C GADemeGA.C GADCrowdingGA.C \
+ GASelector.C GAScaling.C GAPopulation.C GAGenome.C \
+ GABinStr.C gabincvt.C GAAllele.C GAStringGenome.C GARealGenome.C \
+ GA1DBinStrGenome.C GA2DBinStrGenome.C GA3DBinStrGenome.C GABin2DecGenome.C \
+ GA1DArrayGenome.C GA2DArrayGenome.C GA3DArrayGenome.C \
+ GATreeBASE.C GATree.C GATreeGenome.C GAListBASE.C GAList.C GAListGenome.C
+OBJS= garandom.o gaerror.o GAParameter.o GAStatistics.o \
+ GABaseGA.o GASStateGA.o GASimpleGA.o GAIncGA.o GADemeGA.o GADCrowdingGA.o \
+ GASelector.o GAScaling.o GAPopulation.o GAGenome.o \
+ GABinStr.o gabincvt.o GAAllele.o \
+ GA1DBinStrGenome.o GA2DBinStrGenome.o GA3DBinStrGenome.o GABin2DecGenome.o \
+ GA1DArrayGenome.o GA2DArrayGenome.o GA3DArrayGenome.o \
+ GATreeBASE.o GATree.o GATreeGenome.o GAListBASE.o GAList.o GAListGenome.o
+TMPL_SRCS= GAAllele.C \
+ GA1DArrayGenome.C GA2DArrayGenome.C GA3DArrayGenome.C \
+ GATree.C GATreeGenome.C GAList.C GAListGenome.C \
+ GAStringGenome.C GARealGenome.C

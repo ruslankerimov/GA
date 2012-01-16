@@ -1,0 +1,116 @@
+900MHz athlon win2k
+
+CYGWIN_NT-5.0 panela 1.5.12(0.116/4/2) 2004-11-10 08:34 i686 unknown unknown Cygwin
+
+randtest
+start:   Tue Dec 28 19:14:16 EST 2004
+finish:  Tue Dec 28 19:14:18 EST 2004
+
+ex1
+start:   Tue Dec 28 19:14:18 EST 2004
+finish:  Tue Dec 28 19:14:19 EST 2004
+
+ex2
+start:   Tue Dec 28 19:14:19 EST 2004
+finish:  Tue Dec 28 19:14:20 EST 2004
+
+ex3
+start:   Tue Dec 28 19:14:20 EST 2004
+finish:  Tue Dec 28 19:14:22 EST 2004
+
+ex4
+start:   Tue Dec 28 19:14:22 EST 2004
+finish:  Tue Dec 28 19:14:23 EST 2004
+
+ex5
+start:   Tue Dec 28 19:14:23 EST 2004
+finish:  Tue Dec 28 19:14:25 EST 2004
+
+ex6
+start:   Tue Dec 28 19:14:25 EST 2004
+finish:  Tue Dec 28 19:14:53 EST 2004
+
+ex7
+start:   Tue Dec 28 19:14:53 EST 2004
+finish:  Tue Dec 28 19:14:53 EST 2004
+
+ex8
+start:   Tue Dec 28 19:14:53 EST 2004
+finish:  Tue Dec 28 19:14:54 EST 2004
+
+ex9
+start:   Tue Dec 28 19:14:54 EST 2004
+finish:  Tue Dec 28 19:14:54 EST 2004
+
+ex10
+start:   Tue Dec 28 19:14:54 EST 2004
+finish:  Tue Dec 28 19:14:57 EST 2004
+
+ex11
+start:   Tue Dec 28 19:14:57 EST 2004
+finish:  Tue Dec 28 19:14:59 EST 2004
+
+ex12
+start:   Tue Dec 28 19:14:59 EST 2004
+finish:  Tue Dec 28 19:15:00 EST 2004
+
+ex13
+start:   Tue Dec 28 19:15:00 EST 2004
+finish:  Tue Dec 28 19:15:01 EST 2004
+
+ex14
+start:   Tue Dec 28 19:15:01 EST 2004
+finish:  Tue Dec 28 19:15:02 EST 2004
+
+ex15
+start:   Tue Dec 28 19:15:02 EST 2004
+finish:  Tue Dec 28 19:15:03 EST 2004
+
+ex16
+start:   Tue Dec 28 19:15:03 EST 2004
+finish:  Tue Dec 28 19:15:03 EST 2004
+
+ex17
+start:   Tue Dec 28 19:15:03 EST 2004
+finish:  Tue Dec 28 19:15:16 EST 2004
+
+ex18
+start:   Tue Dec 28 19:15:16 EST 2004
+finish:  Tue Dec 28 19:15:17 EST 2004
+
+ex19
+start:   Tue Dec 28 19:15:17 EST 2004
+finish:  Tue Dec 28 19:15:18 EST 2004
+
+ex20
+start:   Tue Dec 28 19:15:18 EST 2004
+finish:  Tue Dec 28 19:18:08 EST 2004
+
+ex21
+start:   Tue Dec 28 19:18:08 EST 2004
+finish:  Tue Dec 28 19:18:10 EST 2004
+
+ex22
+start:   Tue Dec 28 19:18:10 EST 2004
+finish:  Tue Dec 28 19:18:15 EST 2004
+
+ex23
+start:   Tue Dec 28 19:18:15 EST 2004
+finish:  Tue Dec 28 19:18:15 EST 2004
+
+ex24
+start:   Tue Dec 28 19:18:15 EST 2004
+finish:  Tue Dec 28 19:18:16 EST 2004
+
+ex25
+start:   Tue Dec 28 19:18:16 EST 2004
+finish:  Tue Dec 28 19:18:16 EST 2004
+
+ex26
+start:   Tue Dec 28 19:18:16 EST 2004
+finish:  Tue Dec 28 19:18:52 EST 2004
+
+ex27
+start:   Tue Dec 28 19:18:52 EST 2004
+finish:  Tue Dec 28 19:18:53 EST 2004
+

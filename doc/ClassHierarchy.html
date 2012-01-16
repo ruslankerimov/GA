@@ -1,0 +1,98 @@
+<html><head><title>GAlib: Class Hierarchy</title>
+
+<!-- by matthew wall                           all rights reserved -->
+<!-- Copyright (c) 1995-1996 Massachusetts Institute of Technology -->
+<!-- Copyright (c) 1996-1999 Matthew Wall                          -->
+
+</head>
+<body bgcolor="efefef" text="000000">
+<strong><a href="GAlib.html">GAlib</a> Classes</strong><br>
+<i>version 2.4.x</i>
+<p>
+Here is an outline of the GAlib class hierarchy.  The first section is a graphic map, the second section contains an outline of the hierarchy with hot links to the class descriptions.  Please see the <a href="API.html">programming interface</a> for details about the member functions.  Or see the <a href="Overview.html">overview</a> for an explanation of the design philosophy behind GAlib.
+<hr>
+
+<pre>
+<img align=top src="images/GAHierarchy.gif" alt="algorithm">      <img align=top src="images/ScalingHierarchy.gif" alt="scaling">      <img align=top src="images/SelectionHierarchy.gif" alt="scaling">
+</pre>
+<br>
+<br>
+<img align=top src="images/GenomeHierarchy.gif" alt="genome">
+<hr>
+<ul>
+  <p>
+  <li><a href="API.html#ga_base">GAGeneticAlgorithm</a>
+       <ul>
+	 <li><strong><a href="API.html#ga_overlapping">GASteadyStateGA</a></strong> <i>(overlapping populations)</i>
+	 <li><strong><a href="API.html#ga_non_overlapping">GASimpleGA</a></strong> <i>(non-overlapping populations)</i>
+	 <li><strong><a href="API.html#ga_incremental">GAIncrementalGA</a></strong> <i>(overlapping with custom replacement)</i>
+	 <li><strong><a href="API.html#ga_deme">GADemeGA</a></strong> <i>(parallel populations with migration)</i>
+       </ul>
+       </p><p>
+  <li><strong><a href="API.html#statistics">GAStatistics</a></strong>
+       </p><p>
+  <li><strong><a href="API.html#parameters">GAParameterList</a></strong>
+       </p><p>
+  <li><strong><a href="API.html#pop">GAPopulation</a></strong>
+       </p><p>
+  <li><a href="API.html#scaling">GAScalingScheme</a>
+       <ul>
+	 <li><strong>GANoScaling</strong>
+	 <li><strong>GALinearScaling</strong>
+	 <li><strong>GASigmaTruncationScaling</strong>
+	 <li><strong>GAPowerLawScaling</strong>
+	 <li><strong>GASharing</strong>
+       </ul>
+       </p><p>
+  <li><a href="API.html#selection">GASelectionScheme</a>
+       <ul>
+	 <li><strong>GARankSelector</strong>
+	 <li><strong>GARouletteWheelSelector</strong>
+	 <li><strong>GATournamentSelector</strong>
+	 <li><strong>GAUniformSelector</strong>
+	 <li><strong>GASRSSelector</strong>
+	 <li><strong>GADSSelector</strong>
+       </ul>
+       </p><p>
+  <li><a href="API.html#genome_base">GAGenome</a>
+       <ul>
+	 <li><strong><a href="API.html#genome_1dbinstr">GA1DBinaryStringGenome</a></strong>
+	      <ul>
+		<li><strong><a href="API.html#genome_bin2dec">GABin2DecGenome</a></strong>
+	      </ul>
+	 <li><strong><a href="API.html#genome_2dbinstr">GA2DBinaryStringGenome</a></strong>
+	 <li><strong><a href="API.html#genome_3dbinstr">GA3DBinaryStringGenome</a></strong>
+	 <li><strong><a href="API.html#genome_1darray">GA1DArrayGenome&lt;&gt;</a></strong>
+	      <ul>
+		<li><strong><a href="API.html#genome_1darrayallele">GA1DArrayAlleleGenome&lt;&gt;</a></strong>
+		<li><strong><a href="API.html#genome_string">GAStringGenome</a></strong> <i>(same as GA1DArrayAlleleGenome&lt;char&gt;)</i>
+		<li><strong><a href="API.html#genome_string">GARealGenome</a></strong> <i>(same as GA1DArrayAlleleGenome&lt;float&gt;)</i>
+	      </ul>
+	 <li><strong><a href="API.html#genome_2darray">GA2DArrayGenome&lt;&gt;</a></strong>
+	      <ul>
+		<li><strong><a href="API.html#genome_2darrayallele">GA2DArrayAlleleGenome&lt;&gt;</a></strong>
+	      </ul>
+	 <li><strong><a href="API.html#genome_3darray">GA3DArrayGenome&lt;&gt;</a></strong>
+	      <ul>
+		<li><strong><a href="API.html#genome_3darrayallele">GA3DArrayAlleleGenome&lt;&gt;</a></strong>
+	      </ul>
+	 <li><strong><a href="API.html#genome_tree">GATreeGenome&lt;&gt;</a></strong>
+	 <li><strong><a href="API.html#genome_list">GAListGenome&lt;&gt;</a></strong>
+       </ul>
+       </p>
+       <p>
+  <li><strong><a href="API.html#phenotype_b2d">GABin2DecPhenotype</a></strong>
+  <li><strong><a href="API.html#alleleset">GAAlleleSet&lt;&gt;</a></strong>
+  <li><strong><a href="API.html#allelesetarray">GAAlleleSetArray&lt;&gt;</a></strong>
+       </p>
+       <p>
+  <li><strong><a href="API.html#binstr">GABinaryString</a></strong>
+  <li><strong><a href="API.html#array">GAArray&lt;&gt;</a></strong>
+  <li><strong><a href="API.html#tree">GATree&lt;&gt;</a></strong> and <strong>GATreeIter&lt;&gt;</strong>
+  <li><strong><a href="API.html#list">GAList&lt;&gt;</a></strong> and <strong>GAListIter&lt;&gt;</strong>
+       </p>
+</ul>
+<hr>
+<small><i>Matthew Wall, 14 February 1996</i></small>
+
+</body></html>

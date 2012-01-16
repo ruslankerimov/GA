@@ -1,0 +1,116 @@
+powerbook g4 1.3GHz 1.3G ram
+
+Darwin gouda.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov 7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC Power Macintosh powerpc
+
+randtest
+start:   Tue Dec 28 18:01:41 EST 2004
+finish:  Tue Dec 28 18:01:42 EST 2004
+
+ex1
+start:   Tue Dec 28 18:01:42 EST 2004
+finish:  Tue Dec 28 18:01:43 EST 2004
+
+ex2
+start:   Tue Dec 28 18:01:43 EST 2004
+finish:  Tue Dec 28 18:01:43 EST 2004
+
+ex3
+start:   Tue Dec 28 18:01:43 EST 2004
+finish:  Tue Dec 28 18:01:45 EST 2004
+
+ex4
+start:   Tue Dec 28 18:01:45 EST 2004
+finish:  Tue Dec 28 18:01:46 EST 2004
+
+ex5
+start:   Tue Dec 28 18:01:46 EST 2004
+finish:  Tue Dec 28 18:01:48 EST 2004
+
+ex6
+start:   Tue Dec 28 18:01:48 EST 2004
+finish:  Tue Dec 28 18:02:02 EST 2004
+
+ex7
+start:   Tue Dec 28 18:02:02 EST 2004
+finish:  Tue Dec 28 18:02:02 EST 2004
+
+ex8
+start:   Tue Dec 28 18:02:02 EST 2004
+finish:  Tue Dec 28 18:02:03 EST 2004
+
+ex9
+start:   Tue Dec 28 18:02:03 EST 2004
+finish:  Tue Dec 28 18:02:03 EST 2004
+
+ex10
+start:   Tue Dec 28 18:02:03 EST 2004
+finish:  Tue Dec 28 18:02:07 EST 2004
+
+ex11
+start:   Tue Dec 28 18:02:07 EST 2004
+finish:  Tue Dec 28 18:02:08 EST 2004
+
+ex12
+start:   Tue Dec 28 18:02:08 EST 2004
+finish:  Tue Dec 28 18:02:09 EST 2004
+
+ex13
+start:   Tue Dec 28 18:02:09 EST 2004
+finish:  Tue Dec 28 18:02:10 EST 2004
+
+ex14
+start:   Tue Dec 28 18:02:10 EST 2004
+finish:  Tue Dec 28 18:02:11 EST 2004
+
+ex15
+start:   Tue Dec 28 18:02:11 EST 2004
+finish:  Tue Dec 28 18:02:11 EST 2004
+
+ex16
+start:   Tue Dec 28 18:02:11 EST 2004
+finish:  Tue Dec 28 18:02:12 EST 2004
+
+ex17
+start:   Tue Dec 28 18:02:12 EST 2004
+finish:  Tue Dec 28 18:02:26 EST 2004
+
+ex18
+start:   Tue Dec 28 18:02:26 EST 2004
+finish:  Tue Dec 28 18:02:27 EST 2004
+
+ex19
+start:   Tue Dec 28 18:02:27 EST 2004
+finish:  Tue Dec 28 18:02:27 EST 2004
+
+ex20
+start:   Tue Dec 28 18:02:27 EST 2004
+finish:  Tue Dec 28 18:05:32 EST 2004
+
+ex21
+start:   Tue Dec 28 18:05:32 EST 2004
+finish:  Tue Dec 28 18:05:34 EST 2004
+
+ex22
+start:   Tue Dec 28 18:05:34 EST 2004
+finish:  Tue Dec 28 18:05:38 EST 2004
+
+ex23
+start:   Tue Dec 28 18:05:38 EST 2004
+finish:  Tue Dec 28 18:05:39 EST 2004
+
+ex24
+start:   Tue Dec 28 18:05:39 EST 2004
+finish:  Tue Dec 28 18:05:39 EST 2004
+
+ex25
+start:   Tue Dec 28 18:05:39 EST 2004
+finish:  Tue Dec 28 18:05:40 EST 2004
+
+ex26
+start:   Tue Dec 28 18:05:40 EST 2004
+finish:  Tue Dec 28 18:05:53 EST 2004
+
+ex27
+start:   Tue Dec 28 18:05:53 EST 2004
+finish:  Tue Dec 28 18:05:53 EST 2004
+
